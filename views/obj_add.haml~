@@ -1,0 +1,4 @@
+%form
+  %input{:type=>'text', :name=>'title'}
+  %input{:type=>'text', :name=>'description'}
+  %input{:type=>'submit', 'value'=>'Crear recomendación'}
