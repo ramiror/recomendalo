@@ -1,12 +1,12 @@
 %h2 Bienvenido a Recomendalo! La red social de recomendaciones
 %a{:href=>'/register'} Registrate
-%form{:action=>'/login'}
 - if session[:uid]
   %a{:href=>'/logout'} Salir
 - else
-  %input{:type=>'text', :name=>'username'}
-  %input{:type=>'text', :name=>'password'}
-  %input{:type=>'submit', :value=>'Entrar'}
+  %form{:action=>'/login', :method=>'post'}
+    %input{:type=>'text', :name=>'username'}
+    %input{:type=>'text', :name=>'password'}
+    %input{:type=>'submit', :value=>'Entrar'}
 #main
   %p Este espacio es para que puedas recomendar a tus amigos, conocidos o gente que admirás aquellas obras, o lo que sea que te guste y te parezca que merece esparcirse.
   %p También podés seguir las recomendaciones de tus amigos, conocidos y de la gente que admirás.

@@ -18,6 +18,14 @@ DataMapper.setup(:default, {
 
 DataMapper::Logger.new(STDOUT, :debug)
 
+### CONSTANTS
+
+# constantes de recomendación
+NEW = 1
+QUEUED = 2
+ALREADY_SEEN = 3
+DUMPED = 4
+
 ### MODELS
 
 class Obj
@@ -26,9 +34,9 @@ class Obj
   property :title,      String
   property :created_at, DateTime
   property :creator_id, Integer
-  property :description,String
+  property :description,Text
 
-  validates_presense_of :title
+  validates_presence_of :title
 end
 
 class User
@@ -38,8 +46,8 @@ class User
   property :password,   String
   property :created_at, DateTime
 
-  validates_presense_of :username
-  validates_presense_of :password
+  validates_presence_of :username
+  validates_presence_of :password
 end
 
 class Recommendation
@@ -49,10 +57,14 @@ class Recommendation
   property :user_id,    Integer
   property :created_at, DateTime
   property :state,      Integer
+  property :obj_id,     Integer
 
-  validates_presense_of :state
-  validates_presense_of :user_id
-  validates_presense_of :creator_id
+  validates_presence_of :state
+  validates_presence_of :user_id
+  validates_presence_of :creator_id
+  validates_presence_of :obj_id
+
+  belongs_to :obj
 end
 
 class Friendship
@@ -61,9 +73,18 @@ class Friendship
   property :uid2,       Integer, :key => true
 end
 
-DataMapper.auto_migrate!
+class Follow
+  include DataMapper::Resource
+  property :uid1,       Integer, :key => true
+  property :uid2,       Integer, :key => true
+end
 
-enable :sessions
+DataMapper.finalize
+DataMapper.auto_upgrade!
+
+enable :sessions, :logging, :raise_errors
+
+## ACTIONS
 
 get '/' do
 	@objs = Obj.all :order=>[:created_at]
@@ -71,10 +92,23 @@ get '/' do
 end
 
 get '/register' do
-	"Registrate"
+	haml :register
+end
+
+post '/register' do
+	u = User.new(params)
+	if u.save
+		session[:uid] = u.id
+		session[:username] = u.username
+		redirect '/home'
+	else
+		"No se pudo guardar el usuario "+params.inspect
+	end
 end
 
 get '/home' do
+	@recommendations = Recommendation.all :user_id => session[:uid]
+	@objs = Obj.all :creator_id => session[:uid]
 	haml :home
 end
 
@@ -83,7 +117,23 @@ get '/obj/add' do
 end
 
 post '/obj/add' do
-	
+	o = Obj.new(params.merge(:creator_id=>session[:uid]))
+	if o.save
+		# recomendamos el nuevo objeto a todos los que tenemos alrededor
+		fs = Follow.all :uid2=>session[:uid]
+		fs.each do |f|
+			r = Recommendation.new :creator_id => session[:uid], :user_id => f.uid1, :state => NEW, :obj_id => o.id
+			r.save
+		end
+
+		redirect '/home'
+	else
+		"No se pudo guardar el objeto"
+	end
+end
+
+get '/obj/edit' do
+	haml :obj_edit
 end
 
 get '/obj/view' do
@@ -95,7 +145,14 @@ post '/obj/recommend' do
 end
 
 post '/login' do
-	"Acá te estás logueando"
+	u = User.all(:username => params[:username], :password => params[:password])
+	if u.size > 0
+		session[:uid] = u[0].id
+		session[:username] = u[0].username
+		redirect '/home'
+	else
+		'Autenticación inválida'
+	end
 end
 
 get '/logout' do
@@ -116,4 +173,32 @@ get '/login_u2' do
 	session[:uid] = 2
 	session[:username] = "Juancito"
 	redirect "/", 303 
+end
+
+get '/users' do
+	@users = User.all
+	haml :users
+end
+
+get '/users/follow/:uid' do |uid|
+	@user = User.first :id => uid
+	
+	if !@user
+		return "Usuario inválido"
+	end	
+	f = Follow.new(:uid1=>session[:uid], :uid2=>uid)
+	if f.save
+		redirect '/home'
+	else
+		"No se pudo guardar el Follow"
+	end
+end
+
+get '/users/unfollow/:uid' do |uid|
+	f = Follow.first(:uid2=>uid)
+	if f
+		f.destroy
+	else
+		"Follow inválido"
+	end
 end

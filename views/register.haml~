@@ -1,4 +1,4 @@
-%form{:method=>'post'}
+%form
   %label Nombre de usuario
   %input{:type=>'text', :name=>'username'}
   %label Password

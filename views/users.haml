@@ -1,0 +1,5 @@
+- @users.each do |u|
+  .user
+    = u.username
+    %a{:href=>'/users/follow/'+u.id.to_s} Seguir
+    %a{:href=>'/users/unfollow'+u.id.to_s} Dejar de seguir

@@ -1,0 +1,18 @@
+%h2= "Bienvenido #{session[:username]}!"
+
+%h3 Recomendaciones
+- @recommendations.each do |r|
+  .recommendation
+    %h4= r.obj.title
+    %p= r.obj.description
+    %p= 'recomendado por Carlitos'
+
+%h3 Mis páginas
+- @objs.each do |obj|
+  .obj
+    %h4= obj.title
+    %p= obj.description
+    %a{:href=>'/obj/edit/'+obj.id.to_s} Editar
+
+%a{:href=>'/obj/add'} Hacer una recomendación
+%a{:href=>'/users'} Ver lista de usuarios
