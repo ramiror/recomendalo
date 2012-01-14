@@ -1,8 +1,11 @@
 %h2 Bienvenido a Recomendalo! La red social de recomendaciones
-%a{:href=>'/register'} Registrate
+%p 
+  %a{:href=>'/backbone'} Probar backbone
 - if session[:uid]
+  %p= 'Bienvenido '+ulink(session[:uid], session[:username])
   %a{:href=>'/logout'} Salir
 - else
+  %a{:href=>'/register'} Registrate
   %form{:action=>'/login', :method=>'post'}
     %input{:type=>'text', :name=>'username'}
     %input{:type=>'text', :name=>'password'}
@@ -10,6 +13,3 @@
 #main
   %p Este espacio es para que puedas recomendar a tus amigos, conocidos o gente que admirás aquellas obras, o lo que sea que te guste y te parezca que merece esparcirse.
   %p También podés seguir las recomendaciones de tus amigos, conocidos y de la gente que admirás.
-  %a{:href=>'/login_u1'} Entrar como usuario 1
-  %a{:href=>'/login_u2'} Entrar como usuario 2
-  %p= session[:uid] ? "Sos el usuario "+session[:username] : "No estás logueado"

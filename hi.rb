@@ -48,6 +48,8 @@ class User
 
   validates_presence_of :username
   validates_presence_of :password
+
+  has n, :recommendations, :throughs => :creator_id
 end
 
 class Recommendation
@@ -84,7 +86,19 @@ DataMapper.auto_upgrade!
 
 enable :sessions, :logging, :raise_errors
 
-## ACTIONS
+### HELPERS
+
+helpers do
+	def ulink(uid, username)
+		"<a href='/user/#{uid}'>#{username}</a>"
+	end
+end
+
+### ACTIONS
+
+get '/backbone' do
+	haml :backbone	
+end
 
 get '/' do
 	@objs = Obj.all :order=>[:created_at]
@@ -161,20 +175,6 @@ get '/logout' do
 	redirect "/", 303
 end
 
-# Métodos de prueba
-
-get '/login_u1' do
-	session[:uid] = 1
-	session[:username] = "Jorgito"
-	redirect "/", 303 
-end
-
-get '/login_u2' do
-	session[:uid] = 2
-	session[:username] = "Juancito"
-	redirect "/", 303 
-end
-
 get '/users' do
 	@users = User.all
 	haml :users
@@ -202,4 +202,20 @@ get '/users/unfollow/:uid' do |uid|
 	else
 		"Follow inválido"
 	end
+end
+
+get '/user/:uid' do |uid|
+	@user = User.first :id => uid
+	haml :user
+end
+
+### API METHODS
+
+# hay que ir pasando los métodos que soporte el API acá.
+
+# este es de prueba, no se si va a quedar
+post '/users' do
+	# acá poner los parámetros
+	# y cambiar el método para que sea un registro!
+	"eaaaaaaaaaaaaaah"
 end
