@@ -5,6 +5,7 @@ require 'sinatra'
 require 'dm-core'
 require 'dm-validations'
 require 'dm-migrations'
+require 'dm-serializer'
 require 'logger'
 
 ### CONFIGURATION
@@ -95,10 +96,6 @@ helpers do
 end
 
 ### ACTIONS
-
-get '/backbone' do
-	haml :backbone	
-end
 
 get '/' do
 	@objs = Obj.all :order=>[:created_at]
@@ -218,4 +215,8 @@ post '/users' do
 	# acá poner los parámetros
 	# y cambiar el método para que sea un registro!
 	"eaaaaaaaaaaaaaah"
+end
+
+get '/recommendations' do
+	"asdgasdgsa"
 end

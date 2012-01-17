@@ -1,6 +1,4 @@
 %h2 Bienvenido a Recomendalo! La red social de recomendaciones
-%p 
-  %a{:href=>'/backbone'} Probar backbone
 - if session[:uid]
   %p= 'Bienvenido '+ulink(session[:uid], session[:username])
   %a{:href=>'/logout'} Salir

@@ -1,4 +1,18 @@
+%script{:type => "text/javascript", :src  => "jquery-1.7.1.min.js"}
+%script{:type => "text/javascript", :src  => "json2.js"}
+%script{:type => "text/javascript", :src  => "underscore-min.js"}
+%script{:type => "text/javascript", :src  => "backbone-min.js"}
+%script{:type => "text/javascript", :src  => "models.js"}
+%script{:type => "text/javascript", :src  => "home.js"}
+
 %h2= "Bienvenido #{session[:username]}!"
+
+:javascript
+  $(document).ready(function() { recommendations.reset(#{@recommendations.to_json}); showRecommendations(recommendations); });
+  
+
+%h3 Recomendacionesbackbone
+#recommendations
 
 %h3 Recomendaciones
 - @recommendations.each do |r|

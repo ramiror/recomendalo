@@ -21,10 +21,9 @@ var UserStore = Backbone.Collection.extend({
 
 var users = new UserStore();
 
-users.add(user);
-
-//este guarda un usuario en el server
-users.create({
-	username:"usuarioprueba",
-	password:"unaassword"
+var RecommendationStore = Backbone.Collection.extend({
+	model:UserModel, 
+	url: host+'recommendations'
 });
+
+var recommendations = new RecommendationStore();
