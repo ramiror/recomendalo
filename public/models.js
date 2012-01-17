@@ -21,9 +21,18 @@ var UserStore = Backbone.Collection.extend({
 
 var users = new UserStore();
 
-var RecommendationStore = Backbone.Collection.extend({
-	model:UserModel, 
-	url: host+'recommendations'
+// modelo de recomendaciones
+var RModel = Model.extend({
+	defaults: {
+		part1:'hello',
+		part2:'world'
+	}
 });
 
-var recommendations = new RecommendationStore();
+var RList = Backbone.Collection.extend({
+	model:RModel
+	/*, 
+	url: host+'recommendations'*/
+});
+
+var recommendations = new RList();
