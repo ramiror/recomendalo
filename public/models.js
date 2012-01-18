@@ -30,9 +30,8 @@ var RModel = Model.extend({
 });
 
 var RList = Backbone.Collection.extend({
-	model:RModel
-	/*, 
-	url: host+'recommendations'*/
+	model:RModel,
+	url: host+'recommendations'
 });
 
 var recommendations = new RList();

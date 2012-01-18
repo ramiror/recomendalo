@@ -8,7 +8,7 @@
 %h2= "Bienvenido #{session[:username]}!"
 
 :javascript
-  $(document).ready(function() { recommendations.reset(#{@recommendations.to_json}); showRecommendations(recommendations); });
+  $(document).ready(function() { recommendations.reset(#{@recommendations.to_json(:methods=>:obj)});});
   
 
 %h3 Recomendacionesbackbone

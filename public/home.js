@@ -1,10 +1,4 @@
 $(document).ready(function() {
-	//overraideamos la función con una función tonta para que 
-	//no tire errores por el backend
-	Backbone.sync = function(method, model, success, error){ 
-		success();
-	}
-
 	var RView = Backbone.View.extend({
 		tagName: 'li', // name of (orphan) root tag in this.el
 		initialize: function(){

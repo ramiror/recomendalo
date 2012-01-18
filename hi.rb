@@ -217,6 +217,6 @@ post '/users' do
 	"eaaaaaaaaaaaaaah"
 end
 
-get '/recommendations' do
-	"asdgasdgsa"
+delete '/recommendations' do
+	"borrada"
 end
