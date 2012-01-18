@@ -1,37 +1,35 @@
+var recommendationData;
+
 $(document).ready(function() {
 	var RView = Backbone.View.extend({
 		tagName: 'li', // name of (orphan) root tag in this.el
 		initialize: function(){
- 			_.bindAll(this, 'render', 'unrender', 'swap', 'remove'); // every function that uses 'this' as the current object should be in here
+ 			_.bindAll(this, 'render', 'unrender', 'remove','alreadyseen', 'viewlater'); // every function that uses 'this' as the current object should be in here
  			
  			this.model.bind('change', this.render);
 			this.model.bind('remove', this.unrender);
 		},
 		render: function(){
-			console.log("render");
-			$(this.el).html('<span style="color:black;">'+this.model.get('part1')+' '+this.model.get('part2')+'</span> &nbsp; 				&nbsp; <span class="swap" style="font-family:sans-serif; color:blue; cursor:pointer;">[swap]</span> <span 				class="delete" style="cursor:pointer; color:red; font-family:sans-serif;">[delete]</span>');
+			var compiled = _.template('<span style="color:black;"><%= title %></span>  &nbsp;<span class="viewlater" style="cursor:pointer; color:red; font-family:sans-serif;">[ver mas tarde]</span> &nbsp;<span class="alreadyseen" style="cursor:pointer; color:red; font-family:sans-serif;">[ya lo vi]</span> &nbsp;<span class="delete" style="cursor:pointer; color:red; font-family:sans-serif;">[botar]</span>');
+			$(this.el).html(compiled({title:this.model.get('obj').title}));
 			return this; // for chainable calls, like .render().el
     		},
     		unrender: function(){
-    			console.log("unrender");
 			$(this.el).remove();
 		},
-		swap: function(){
-			console.log("swap");
-			var swapped = {
-				part1: this.model.get('part2'), 
-				part2: this.model.get('part1')
-			};
-			this.model.set(swapped);
+		alreadyseen: function() {
+			this.model.save({state:ALREADY_SEEN});
 		},
+		viewlater: function() {
+			this.model.save({state:QUEUED});
+		},		
 		remove: function() {
-			console.log("remove");
-			this.model.destroy();
-			console.log("after remove");
+			this.model.save({state:DUMPED});
 		},
-		events: { 
-			'click span.swap':  'swap',
-			'click span.delete': 'remove'
+		events: {
+			'click span.delete': 'remove',
+			'click span.viewlater': 'viewlater',
+			'click span.alreadyseen': 'alreadyseen'
 		}
 	});
 
@@ -40,10 +38,13 @@ $(document).ready(function() {
 		events: {
 			'click button#add': 'addItem'
 		},
-		initialize: function() {
+		initialize: function(opts) {
 			_.bindAll(this, 'render', 'addItem', 'appendItem'); // every function that uses 'this' as the current object should be in here
-
-			this.collection = new RList();
+			if (opts.collection != undefined) {
+				this.collection = opts.collection;
+			} else {
+				this.collection = new RList();
+			}
 			this.collection.bind('add', this.appendItem); // collection event binder	      
 			
 			this.counter = 0; // total number of items added thus far
@@ -51,7 +52,6 @@ $(document).ready(function() {
 		},
 
 		//render() now introduces a button to add a new list item.
-
 		render: function() {
 			var self = this;
 			
@@ -72,6 +72,7 @@ $(document).ready(function() {
 			});
 			this.collection.add(item); // add item to collection; view is updated via event 'add'
 		},
+		
 		appendItem: function(item){
 			var itemView = new RView({
 				model: item
@@ -80,7 +81,11 @@ $(document).ready(function() {
     		}
 	});
 
-	var rview = new RNView();
+	var recommendations = new RList();
+	recommendations.reset(recommendationData);
+	var rview = new RNView({
+		collection: recommendations
+	});
 });
 
 function showRecommendations(recommendations) {

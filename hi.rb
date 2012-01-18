@@ -143,6 +143,11 @@ post '/obj/add' do
 	end
 end
 
+# devuelve todos los obj
+get '/obj' do
+
+end
+
 get '/obj/edit' do
 	haml :obj_edit
 end
@@ -215,6 +220,20 @@ post '/users' do
 	# acá poner los parámetros
 	# y cambiar el método para que sea un registro!
 	"eaaaaaaaaaaaaaah"
+end
+
+put '/recommendations/:rid' do |rid|
+	@recommendation = Recommendation.first :id => rid
+	
+	if @recommendation
+		json = JSON.parse request.body.read
+		update_params = {:state => json["state"]}
+		#TODO: ver qué parámetros son updateables!
+		@recommendation.update(update_params)
+		'success'
+	else
+		'error'
+	end
 end
 
 delete '/recommendations' do

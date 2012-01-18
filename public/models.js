@@ -1,3 +1,4 @@
+// esto tiene todos los modelos que se usan en la página
 // cambiar esto por CoffeeScript
 var host = 'http://localhost:4567/';
 
@@ -12,14 +13,10 @@ var UserModel = Model.extend({
 	}
 });
 
-var user = new UserModel();
-
 var UserStore = Backbone.Collection.extend({
 	model:UserModel, 
 	url: host+'users'
 });
-
-var users = new UserStore();
 
 // modelo de recomendaciones
 var RModel = Model.extend({
@@ -33,5 +30,3 @@ var RList = Backbone.Collection.extend({
 	model:RModel,
 	url: host+'recommendations'
 });
-
-var recommendations = new RList();
