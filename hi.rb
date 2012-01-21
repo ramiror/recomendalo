@@ -118,7 +118,6 @@ post '/register' do
 end
 
 get '/home' do
-	@recommendations = Recommendation.all :user_id => session[:uid]
 	@objs = Obj.all :creator_id => session[:uid]
 	haml :home
 end
@@ -238,4 +237,9 @@ end
 
 delete '/recommendations' do
 	"borrada"
+end
+
+get '/recommendations/:state' do |state| 
+	@recommendations = Recommendation.all :state => state
+	@recommendations.to_json(:methods=>:obj)
 end

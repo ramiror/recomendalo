@@ -1,0 +1,21 @@
+#recommendations {
+
+}
+
+#recommendations li {
+	border: blue 1px;
+	background: yellow;
+	width:300px;
+}
+
+.clear {
+	clear:both;
+}
+
+.left {
+	float:left;
+}
+
+.right {
+	float:right;
+}

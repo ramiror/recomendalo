@@ -5,24 +5,18 @@
 %script{:type => "text/javascript", :src  => "models.js"}
 %script{:type => "text/javascript", :src  => "home.js"}
 
+%link(rel="stylesheet" type="text/css" href="styles.css")
+
 %h2= "Bienvenido #{session[:username]}!"
 
 :javascript
-  var recommendationData = #{@recommendations.to_json(:methods=>:obj)};
   var NEW = #{NEW};
   var QUEUED = #{QUEUED};
   var ALREADY_SEEN = #{ALREADY_SEEN};
   var DUMPED = #{DUMPED};
 
 %h3 Recomendacionesbackbone
-#recommendations
-
-%h3 Recomendaciones
-- @recommendations.each do |r|
-  .recommendation
-    %h4= r.obj.title
-    %p= r.obj.description
-    %p= 'recomendado por Carlitos'
+%ul#recommendations
 
 %h3 Mis páginas
 - @objs.each do |obj|
