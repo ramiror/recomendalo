@@ -240,6 +240,19 @@ delete '/recommendations' do
 end
 
 get '/recommendations/:state' do |state| 
+	case state
+		when 'new'
+			state = NEW
+		when 'queued'
+			state = QUEUED
+		when 'already_seen'
+			state = ALREADY_SEEN
+		when 'dumped'
+			state = DUMPED
+		else
+			halt 500
+	end
+
 	@recommendations = Recommendation.all :state => state
 	@recommendations.to_json(:methods=>:obj)
 end

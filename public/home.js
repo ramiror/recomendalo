@@ -88,28 +88,28 @@ $(document).ready(function() {
     		},
     		selectNew: function() {
     			var self = this;
-			$.getJSON('/recommendations/'+NEW, function(data) {
+			$.getJSON('/recommendations/new', function(data) {
 				self.collection.reset(data);
 				self.render();	
 			});
     		},
     		selectQueued: function() {
     			var self = this;
-			$.getJSON('/recommendations/'+QUEUED, function(data) {
+			$.getJSON('/recommendations/queued', function(data) {
 				self.collection.reset(data);
 				self.render();	
 			});
     		},
     		selectSeen: function() {
     			var self = this;
-			$.getJSON('/recommendations/'+ALREADY_SEEN, function(data) {
+			$.getJSON('/recommendations/already_seen', function(data) {
 				self.collection.reset(data);
 				self.render();	
 			});
     		},
     		selectDumped: function() {
     			var self = this;
-			$.getJSON('/recommendations/'+DUMPED, function(data) {
+			$.getJSON('/recommendations/dumped', function(data) {
 				console.log(data);
 				self.collection.reset(data);
 				self.render();	
