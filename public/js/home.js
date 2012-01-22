@@ -39,7 +39,7 @@ $(document).ready(function() {
 			'click button#add': 'addItem'
 		},
 		initialize: function(opts) {
-			_.bindAll(this, 'render', 'addItem', 'selectNew', 'selectQueued', 'selectSeen', 'selectDumped', 'appendItem'); // every function that uses 'this' as the current object should be in here
+			_.bindAll(this, 'render', 'addItem', 'selectNew', 'selectQueued', 'selectSeen', 'selectDumped', 'appendItem', 'createRecommendation'); // every function that uses 'this' as the current object should be in here
 			if (opts.collection != undefined) {
 				this.collection = opts.collection;
 			} else {
@@ -63,6 +63,7 @@ $(document).ready(function() {
 			$(this.el).append("<button class='queued'>Encoladas</button>");
 			$(this.el).append("<button class='seen'>Vistas</button>");
 			$(this.el).append("<button class='dumped'>Descartadas</button>");
+			$(this.el).append("<button class='recommend'>Recomendar</button>");
 			
 			$(this.el).append("<ul></ul>");
 			
@@ -110,16 +111,45 @@ $(document).ready(function() {
     		selectDumped: function() {
     			var self = this;
 			$.getJSON('/recommendations/dumped', function(data) {
-				console.log(data);
 				self.collection.reset(data);
 				self.render();	
 			});
+    		},
+    		createRecommendation: function() {
+    			var self = this;
+    			
+    			$('#createRecommendationDialog').dialog({
+    				title: "Crear recomendación",
+    				buttons: {
+    					"Crear": function() {
+						var obj = new ObjModel();
+						obj.save({
+							title: $('#recommendationTitle').val(),
+							description: $('#recommendationDescription').val(),
+							website: $('#recommendationWebsite').val()
+						}, {
+							success: function() {
+								console.log("success");
+		    						$(this).dialog("close");	
+							},
+							error: function() {
+								console.log("error");
+		    						$(this).dialog("close");							
+							}
+						});
+    					},
+    					"Cancelar": function() {
+    						$(this).dialog("close");
+    					}
+    				}
+    			});
     		},
 		events: {
 			'click button.new': 'selectNew',
 			'click button.seen': 'selectSeen',
 			'click button.queued': 'selectQueued',
 			'click button.dumped': 'selectDumped',
+			'click button.recommend' : 'createRecommendation'
 		}
 	});
 

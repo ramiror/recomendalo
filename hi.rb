@@ -7,6 +7,7 @@ require 'dm-validations'
 require 'dm-migrations'
 require 'dm-serializer'
 require 'logger'
+require 'json'
 
 ### CONFIGURATION
 
@@ -29,6 +30,7 @@ DUMPED = 4
 
 ### MODELS
 
+#TODO: cambiar 'obj' a 'page'
 class Obj
   include DataMapper::Resource
   property :id,         Serial
@@ -36,8 +38,10 @@ class Obj
   property :created_at, DateTime
   property :creator_id, Integer
   property :description,Text
+  property :website,    String
 
   validates_presence_of :title
+  validates_presence_of :description
 end
 
 class User
@@ -119,44 +123,8 @@ end
 
 get '/home' do
 	@objs = Obj.all :creator_id => session[:uid]
+	@objs.to_json(:methods=>:obj)	
 	haml :home
-end
-
-get '/obj/add' do
-	haml :obj_add
-end
-
-post '/obj/add' do
-	o = Obj.new(params.merge(:creator_id=>session[:uid]))
-	if o.save
-		# recomendamos el nuevo objeto a todos los que tenemos alrededor
-		fs = Follow.all :uid2=>session[:uid]
-		fs.each do |f|
-			r = Recommendation.new :creator_id => session[:uid], :user_id => f.uid1, :state => NEW, :obj_id => o.id
-			r.save
-		end
-
-		redirect '/home'
-	else
-		"No se pudo guardar el objeto"
-	end
-end
-
-# devuelve todos los obj
-get '/obj' do
-
-end
-
-get '/obj/edit' do
-	haml :obj_edit
-end
-
-get '/obj/view' do
-
-end
-
-post '/obj/recommend' do
-
 end
 
 post '/login' do
@@ -212,22 +180,13 @@ end
 
 ### API METHODS
 
-# hay que ir pasando los métodos que soporte el API acá.
-
-# este es de prueba, no se si va a quedar
-post '/users' do
-	# acá poner los parámetros
-	# y cambiar el método para que sea un registro!
-	"eaaaaaaaaaaaaaah"
-end
-
+# actualiza una recomendación
 put '/recommendations/:rid' do |rid|
 	@recommendation = Recommendation.first :id => rid
 	
 	if @recommendation
 		json = JSON.parse request.body.read
 		update_params = {:state => json["state"]}
-		#TODO: ver qué parámetros son updateables!
 		@recommendation.update(update_params)
 		'success'
 	else
@@ -235,10 +194,7 @@ put '/recommendations/:rid' do |rid|
 	end
 end
 
-delete '/recommendations' do
-	"borrada"
-end
-
+# devuelve recomendaciones según el estado
 get '/recommendations/:state' do |state| 
 	case state
 		when 'new'
@@ -255,4 +211,28 @@ get '/recommendations/:state' do |state|
 
 	@recommendations = Recommendation.all :state => state
 	@recommendations.to_json(:methods=>:obj)
+end
+
+# crea una página
+post '/pages' do
+	json = JSON.parse request.body.read
+	o = Obj.new(json.merge(:creator_id=>session[:uid]))		
+	if o.save
+		# recomendamos el nuevo objeto a todos los que tenemos alrededor
+		fs = Follow.all :uid2=>session[:uid]
+		fs.each do |f|
+			r = Recommendation.new :creator_id => session[:uid], :user_id => f.uid1, :state => NEW, :obj_id => o.id
+			r.save
+		end
+
+		'success'
+	else
+		'error'
+	end	
+end
+
+# devuelve las páginas del usuario
+get '/pages' do
+#	@pages = Page.all :creator_id => session[:uid]
+#	@pages.to_json(:methods=>:obj)	
 end

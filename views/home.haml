@@ -1,11 +1,13 @@
-%script{:type => "text/javascript", :src  => "jquery-1.7.1.min.js"}
-%script{:type => "text/javascript", :src  => "json2.js"}
-%script{:type => "text/javascript", :src  => "underscore-min.js"}
-%script{:type => "text/javascript", :src  => "backbone-min.js"}
-%script{:type => "text/javascript", :src  => "models.js"}
-%script{:type => "text/javascript", :src  => "home.js"}
+%script{:type => "text/javascript", :src  => "js/jquery-1.7.1.min.js"}
+%script{:type => "text/javascript", :src  => "js/jquery-ui-1.8.17.custom.min.js"}
+%script{:type => "text/javascript", :src  => "js/json2.js"}
+%script{:type => "text/javascript", :src  => "js/underscore-min.js"}
+%script{:type => "text/javascript", :src  => "js/backbone-min.js"}
+%script{:type => "text/javascript", :src  => "js/models.js"}
+%script{:type => "text/javascript", :src  => "js/home.js"}
 
-%link(rel="stylesheet" type="text/css" href="styles.css")
+%link(rel="stylesheet" type="text/css" href="css/styles.css")
+%link(rel="stylesheet" type="text/css" href="css/ui-darkness/jquery-ui-1.8.17.custom.css")
 
 %h2= "Bienvenido #{session[:username]}!"
 
@@ -27,3 +29,11 @@
 
 %a{:href=>'/obj/add'} Hacer una recomendación
 %a{:href=>'/users'} Ver lista de usuarios
+
+#createRecommendationDialog
+  %label{:for=>'recommendationTitle'} Título
+  %input{:type=>'text', :name=>'title', :id=>'recommendationTitle'}
+  %label{:for=>'recommendationDescription'} Descripción
+  %textarea{:name=>'description', :id=>'recommendationDescription'}
+  %label{:for=>'recommendationWebsite'} Website
+  %input{:name=>'website', :id=>'recommendationWebsite'}
