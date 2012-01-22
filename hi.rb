@@ -31,7 +31,7 @@ DUMPED = 4
 ### MODELS
 
 #TODO: cambiar 'obj' a 'page'
-class Obj
+class Page
   include DataMapper::Resource
   property :id,         Serial
   property :title,      String
@@ -64,14 +64,14 @@ class Recommendation
   property :user_id,    Integer
   property :created_at, DateTime
   property :state,      Integer
-  property :obj_id,     Integer
+  property :page_id,     Integer
 
   validates_presence_of :state
   validates_presence_of :user_id
   validates_presence_of :creator_id
-  validates_presence_of :obj_id
+  validates_presence_of :page_id
 
-  belongs_to :obj
+  belongs_to :page
 end
 
 class Friendship
@@ -102,7 +102,6 @@ end
 ### ACTIONS
 
 get '/' do
-	@objs = Obj.all :order=>[:created_at]
 	haml :index
 end
 
@@ -122,8 +121,6 @@ post '/register' do
 end
 
 get '/home' do
-	@objs = Obj.all :creator_id => session[:uid]
-	@objs.to_json(:methods=>:obj)	
 	haml :home
 end
 
@@ -209,30 +206,37 @@ get '/recommendations/:state' do |state|
 			halt 500
 	end
 
-	@recommendations = Recommendation.all :state => state
-	@recommendations.to_json(:methods=>:obj)
+	@recommendations = Recommendation.all :state => state, :user_id => session[:uid]
+	@recommendations.to_json(:methods=>:page)
 end
 
 # crea una página
 post '/pages' do
 	json = JSON.parse request.body.read
-	o = Obj.new(json.merge(:creator_id=>session[:uid]))		
-	if o.save
+	page = Page.new(json.merge(:creator_id=>session[:uid]))		
+	if page.save
 		# recomendamos el nuevo objeto a todos los que tenemos alrededor
 		fs = Follow.all :uid2=>session[:uid]
 		fs.each do |f|
-			r = Recommendation.new :creator_id => session[:uid], :user_id => f.uid1, :state => NEW, :obj_id => o.id
+			r = Recommendation.new :creator_id => session[:uid], :user_id => f.uid1, :state => NEW, :page_id => page.id
 			r.save
 		end
 
-		'success'
+		halt 200
 	else
-		'error'
-	end	
+		halt 500
+	end
 end
 
 # devuelve las páginas del usuario
 get '/pages' do
-#	@pages = Page.all :creator_id => session[:uid]
-#	@pages.to_json(:methods=>:obj)	
+	@pages = Page.all :creator_id => session[:uid]
+	@pages.to_json
+end
+
+delete '/pages/:pid' do |pid|
+	@page = Page.first :id => pid
+	if @page.creator_id == session[:uid]
+		@page.destroy
+	end
 end

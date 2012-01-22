@@ -21,19 +21,15 @@
 %ul#recommendations
 
 %h3 Mis páginas
-- @objs.each do |obj|
-  .obj
-    %h4= obj.title
-    %p= obj.description
-    %a{:href=>'/obj/edit/'+obj.id.to_s} Editar
+%ul#pages
 
 %a{:href=>'/obj/add'} Hacer una recomendación
 %a{:href=>'/users'} Ver lista de usuarios
 
-#createRecommendationDialog
-  %label{:for=>'recommendationTitle'} Título
-  %input{:type=>'text', :name=>'title', :id=>'recommendationTitle'}
-  %label{:for=>'recommendationDescription'} Descripción
-  %textarea{:name=>'description', :id=>'recommendationDescription'}
-  %label{:for=>'recommendationWebsite'} Website
-  %input{:name=>'website', :id=>'recommendationWebsite'}
+#createPageDialog
+  %label{:for=>'pageTitle'} Título
+  %input{:type=>'text', :name=>'title', :id=>'pageTitle'}
+  %label{:for=>'pageDescription'} Descripción
+  %textarea{:name=>'description', :id=>'pageDescription'}
+  %label{:for=>'pageWebsite'} Website
+  %input{:name=>'website', :id=>'pageWebsite'}

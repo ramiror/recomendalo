@@ -11,7 +11,7 @@ $(document).ready(function() {
 		},
 		render: function(){
 			var compiled = _.template('<div style="color:black;"><%= title %></div> <div><%= desc %></div> <div class="clear"></div> &nbsp;<span class="viewlater" style="cursor:pointer; color:red; font-family:sans-serif;">[ver mas tarde]</span> &nbsp;<span class="alreadyseen" style="cursor:pointer; color:red; font-family:sans-serif;">[ya lo vi]</span> &nbsp;<span class="delete" style="cursor:pointer; color:red; font-family:sans-serif;">[botar]</span>');
-			$(this.el).html(compiled({title:this.model.get('obj').title, desc: this.model.get('obj').description}));
+			$(this.el).html(compiled({title:this.model.get('page').title, desc: this.model.get('page').description}));
 			return this; // for chainable calls, like .render().el
     		},
     		unrender: function(){
@@ -35,11 +35,8 @@ $(document).ready(function() {
 
 	var RNView = Backbone.View.extend({
 		el:$('#recommendations'),
-		events: {
-			'click button#add': 'addItem'
-		},
 		initialize: function(opts) {
-			_.bindAll(this, 'render', 'addItem', 'selectNew', 'selectQueued', 'selectSeen', 'selectDumped', 'appendItem', 'createRecommendation'); // every function that uses 'this' as the current object should be in here
+			_.bindAll(this, 'render', 'selectNew', 'selectQueued', 'selectSeen', 'selectDumped', 'appendItem'); // every function that uses 'this' as the current object should be in here
 			if (opts.collection != undefined) {
 				this.collection = opts.collection;
 			} else {
@@ -47,8 +44,6 @@ $(document).ready(function() {
 			}
 			
 			//this.collection.bind('add', this.appendItem); // collection event binder	      
-			
-			this.counter = 0; // total number of items added thus far
 			this.render();
 		},
 
@@ -63,23 +58,12 @@ $(document).ready(function() {
 			$(this.el).append("<button class='queued'>Encoladas</button>");
 			$(this.el).append("<button class='seen'>Vistas</button>");
 			$(this.el).append("<button class='dumped'>Descartadas</button>");
-			$(this.el).append("<button class='recommend'>Recomendar</button>");
 			
 			$(this.el).append("<ul></ul>");
 			
 			_(this.collection.models).each(function(item){ // in case collection is not empty
 		        	self.appendItem(item);
 		      	}, this);
-		},
-
-		//addItem(): Custom function called via click event above.
-		addItem: function(){
-			this.counter++;
-			var item = new RModel();
-			item.set({
-				part2: item.get('part2') + this.counter // modify item defaults
-			});
-			this.collection.add(item); // add item to collection; view is updated via event 'add'
 		},
 		appendItem: function(item){
 			var itemView = new RView({
@@ -115,28 +99,104 @@ $(document).ready(function() {
 				self.render();	
 			});
     		},
-    		createRecommendation: function() {
+		events: {
+			'click button.new': 'selectNew',
+			'click button.seen': 'selectSeen',
+			'click button.queued': 'selectQueued',
+			'click button.dumped': 'selectDumped'
+		}
+	});
+	
+
+	var PageView = Backbone.View.extend({
+		tagName: 'li', // name of (orphan) root tag in this.el
+		initialize: function(){
+ 			_.bindAll(this, 'render', 'unrender', 'remove', 'edit'); // every function that uses 'this' as the current object should be in here
+ 			
+ 			this.model.bind('change', this.render);
+			this.model.bind('remove', this.unrender);
+		},
+		render: function(){
+			var compiled = _.template('<div class="page-title"><%= title %></div> <div class="page-description"><%= desc %></div> <div class="clear"></div> &nbsp;<span class="edit" style="cursor:pointer; color:red; font-family:sans-serif;">[editar]</span> &nbsp;<span class="delete" style="cursor:pointer; color:red; font-family:sans-serif;">[borrar]</span>');
+			$(this.el).html(compiled({title:this.model.get('title'), desc: this.model.get('description')}));
+			return this; // for chainable calls, like .render().el
+    		},
+    		unrender: function(){
+			$(this.el).remove();
+		},
+		edit: function() {
+			//TODO: abre el mismo diálogo que antes pero permite editar.
+			console.log("editar");
+		},
+		remove: function() {
+			this.model.destroy();
+		},
+		events: {
+			'click span.delete': 'remove',
+			'click span.edit': 'edit',
+		}
+	});
+	
+	var PageNView = Backbone.View.extend({
+		el:$('#pages'),
+		initialize: function(opts) {
+			_.bindAll(this, 'render', 'load', 'createPage', 'appendItem'); // every function that uses 'this' as the current object should be in here
+			if (opts.collection != undefined) {
+				this.collection = opts.collection;
+			} else {
+				this.collection = new PageList();
+			}
+			
+			this.collection.bind('add', this.appendItem); // collection event bind
+			this.render();
+		},
+		//render() now introduces a button to add a new list item.
+		render: function() {
+			var self = this;
+			
+			$(this.el).html(''); //borramos datos del elemento, si los hubiera
+			
+			$(this.el).append("<button class='recommend'>Crear página</button>");
+			
+			$(this.el).append("<ul></ul>");
+			
+			_(this.collection.models).each(function(item){ // in case collection is not empty
+		        	self.appendItem(item);
+		      	}, this);
+		},
+		appendItem: function(item){
+			var pageView = new PageView({
+				model: item
+			});
+			$('ul', this.el).append(pageView.render().el);
+    		},
+    		load: function() {	
+    			var self = this;
+			$.getJSON('/pages', function(data) {
+				self.collection.reset(data);
+				self.render();	
+			});
+    		},
+    		createPage: function() {
     			var self = this;
     			
-    			$('#createRecommendationDialog').dialog({
+    			$('#createPageDialog').dialog({
     				title: "Crear recomendación",
     				buttons: {
     					"Crear": function() {
-						var obj = new ObjModel();
-						obj.save({
-							title: $('#recommendationTitle').val(),
-							description: $('#recommendationDescription').val(),
-							website: $('#recommendationWebsite').val()
+						self.collection.create({
+							title: $('#pageTitle').val(),
+							description: $('#pageDescription').val(),
+							website: $('#pageWebsite').val()
 						}, {
 							success: function() {
 								console.log("success");
-		    						$(this).dialog("close");	
 							},
-							error: function() {
+							error: function(model, response) {
 								console.log("error");
-		    						$(this).dialog("close");							
 							}
 						});
+ 						$(this).dialog("close");						
     					},
     					"Cancelar": function() {
     						$(this).dialog("close");
@@ -145,17 +205,21 @@ $(document).ready(function() {
     			});
     		},
 		events: {
-			'click button.new': 'selectNew',
-			'click button.seen': 'selectSeen',
-			'click button.queued': 'selectQueued',
-			'click button.dumped': 'selectDumped',
-			'click button.recommend' : 'createRecommendation'
+			'click button.recommend' : 'createPage'
 		}
 	});
+	
 
+	// inicialización
 	var recommendations = new RList();
 	var rview = new RNView({
 		collection: recommendations
 	});
 	rview.selectNew();
+	
+	var pages = new PageList();
+	var pview = new PageNView({
+		collection: pages
+	});
+	pview.load();
 });
