@@ -109,17 +109,6 @@ get '/register' do
 	haml :register
 end
 
-post '/register' do
-	u = User.new(params)
-	if u.save
-		session[:uid] = u.id
-		session[:username] = u.username
-		redirect '/home'
-	else
-		"No se pudo guardar el usuario "+params.inspect
-	end
-end
-
 get '/home' do
 	haml :home
 end
@@ -238,5 +227,16 @@ delete '/pages/:pid' do |pid|
 	@page = Page.first :id => pid
 	if @page.creator_id == session[:uid]
 		@page.destroy
+	end
+end
+
+post '/register' do
+	u = User.new(params)
+	if u.save
+		session[:uid] = u.id
+		session[:username] = u.username
+		redirect '/home'
+	else
+		"No se pudo guardar el usuario "+params.inspect
 	end
 end

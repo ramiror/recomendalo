@@ -1,13 +1,34 @@
+%script{:type => "text/javascript", :src  => "js/jquery-1.7.1.min.js"}
+%script{:type => "text/javascript", :src  => "js/jquery-ui-1.8.17.custom.min.js"}
+%script{:type => "text/javascript", :src  => "js/json2.js"}
+%script{:type => "text/javascript", :src  => "js/underscore-min.js"}
+%script{:type => "text/javascript", :src  => "js/backbone-min.js"}
+%script{:type => "text/javascript", :src  => "js/models.js"}
+%script{:type => "text/javascript", :src  => "js/index.js"}
+
+%link(rel="stylesheet" type="text/css" href="css/styles.css")
+%link(rel="stylesheet" type="text/css" href="css/ui-darkness/jquery-ui-1.8.17.custom.css")
+
 %h2 Bienvenido a Recomendalo! La red social de recomendaciones
 - if session[:uid]
   %p= 'Bienvenido '+ulink(session[:uid], session[:username])
   %a{:href=>'/logout'} Salir
 - else
-  %a{:href=>'/register'} Registrate
-  %form{:action=>'/login', :method=>'post'}
-    %input{:type=>'text', :name=>'username'}
-    %input{:type=>'text', :name=>'password'}
-    %input{:type=>'submit', :value=>'Entrar'}
+  %a{:href=>'javascript:register();'} Registrate
+  %a{:href=>'javascript:login();'} Login
+    
 #main
   %p Este espacio es para que puedas recomendar a tus amigos, conocidos o gente que admirás aquellas obras, o lo que sea que te guste y te parezca que merece esparcirse.
   %p También podés seguir las recomendaciones de tus amigos, conocidos y de la gente que admirás.
+  
+#registerDialog
+  %form{:action=>'/register', :method=>'post'}
+    %label Nombre de usuario
+    %input{:type=>'text', :name=>'username'}
+    %label Password
+    %input{:type=>'text', :name=>'password'}
+
+#loginDialog
+  %form{:action=>'/login', :method=>'post'}
+    %input{:type=>'text', :name=>'username'}
+    %input{:type=>'text', :name=>'password'}

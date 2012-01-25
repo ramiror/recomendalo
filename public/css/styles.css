@@ -23,3 +23,12 @@
 #createPageDialog {
 	display:none;
 }
+
+#registerDialog {
+	display:none;
+}
+
+#loginDialog {
+	display:none;
+}
+
