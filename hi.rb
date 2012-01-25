@@ -1,7 +1,5 @@
 # encoding: UTF-8
-require 'rubygems'
 require 'bundler/setup'
-require 'sinatra'
 require 'dm-core'
 require 'dm-validations'
 require 'dm-migrations'
