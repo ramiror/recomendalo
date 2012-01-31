@@ -21,9 +21,8 @@
 %ul#recommendations
 
 %h3 Mis páginas
-%ul#pages
+#pages
 
-%a{:href=>'/obj/add'} Hacer una recomendación
 %a{:href=>'/users'} Ver lista de usuarios
 
 #createPageDialog
@@ -33,3 +32,6 @@
   %textarea{:name=>'description', :id=>'pageDescription'}
   %label{:for=>'pageWebsite'} Website
   %input{:name=>'website', :id=>'pageWebsite'}
+
+%h3 Buscar
+#searchpages

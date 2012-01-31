@@ -1,4 +1,5 @@
 # encoding: UTF-8
+require 'sinatra'
 require 'bundler/setup'
 require 'dm-core'
 require 'dm-validations'
@@ -166,12 +167,12 @@ end
 
 # actualiza una recomendación
 put '/recommendations/:rid' do |rid|
-	@recommendation = Recommendation.first :id => rid
+	recommendation = Recommendation.first :id => rid
 	
-	if @recommendation
+	if recommendation
 		json = JSON.parse request.body.read
 		update_params = {:state => json["state"]}
-		@recommendation.update(update_params)
+		recommendation.update(update_params)
 		'success'
 	else
 		'error'
@@ -193,8 +194,8 @@ get '/recommendations/:state' do |state|
 			halt 500
 	end
 
-	@recommendations = Recommendation.all :state => state, :user_id => session[:uid]
-	@recommendations.to_json(:methods=>:page)
+	recommendations = Recommendation.all :state => state, :user_id => session[:uid]
+	recommendations.to_json(:methods=>:page)
 end
 
 # crea una página
@@ -217,14 +218,25 @@ end
 
 # devuelve las páginas del usuario
 get '/pages' do
-	@pages = Page.all :creator_id => session[:uid]
-	@pages.to_json
+	pages = Page.all :creator_id => session[:uid]
+	pages.to_json
+end
+
+# busca una página entre varios medios de búsqueda
+get '/search' do
+	engines = [DbSearchEngine.new]
+	
+	pages = []
+	engines.each do |engine|
+		pages += engine.search params[:query]
+	end
+	pages.to_json
 end
 
 delete '/pages/:pid' do |pid|
-	@page = Page.first :id => pid
-	if @page.creator_id == session[:uid]
-		@page.destroy
+	page = Page.first :id => pid
+	if page.creator_id == session[:uid]
+		page.destroy
 	end
 end
 
@@ -236,5 +248,21 @@ post '/register' do
 		redirect '/home'
 	else
 		"No se pudo guardar el usuario "+params.inspect
+	end
+end
+
+# SEARCH ENGINES
+
+class SearchEngine
+	def search(query)
+		raise NotImplementedError
+	end
+end
+
+# busca pages en la base de datos local
+class DbSearchEngine < SearchEngine
+	def search(query)
+		query_like = '%'+query+'%'
+		return Page.all(:title.like => query_like) | Page.all(:description.like => query_like)
 	end
 end

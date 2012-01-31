@@ -121,7 +121,7 @@ $(document).ready(function() {
 			$(this.el).html(compiled({title:this.model.get('title'), desc: this.model.get('description')}));
 			return this; // for chainable calls, like .render().el
     		},
-    		unrender: function(){
+		unrender: function(){
 			$(this.el).remove();
 		},
 		edit: function() {
@@ -134,6 +134,54 @@ $(document).ready(function() {
 		events: {
 			'click span.delete': 'remove',
 			'click span.edit': 'edit',
+		}
+	});
+	
+	var SearchPageView = Backbone.View.extend({
+		el:$('#searchpages'),
+		initialize: function(opts) {
+			_.bindAll(this, 'render', 'search', 'appendItem'); // every function that uses 'this' as the current object should be in here
+			if (opts.collection != undefined) {
+				this.collection = opts.collection;
+			} else {
+				this.collection = new PageList();
+			}
+			
+			this.collection.bind('add', this.appendItem); // collection event bind
+			this.render();
+		},
+		//render() now introduces a button to add a new list item.
+		render: function() {
+			var self = this;
+			
+			$(this.el).html(''); //borramos datos del elemento, si los hubiera
+			
+			$(this.el).append("<input type='text' name='query' />");
+			$(this.el).append("<button class='buscar'>Buscar</button>");
+			
+			$(this.el).append("<ul></ul>");
+			
+			_(this.collection.models).each(function(item){ // in case collection is not empty
+				self.appendItem(item);
+			}, this);
+		},
+		appendItem: function(item){
+			var pageView = new PageView({
+				model: item
+			});
+			$('ul', this.el).append(pageView.render().el);
+		},
+		search: function() {	
+			var self = this;
+			var query = this.el.find('input[name=query]').val();
+			$.getJSON('/search', {query:query}, function(data) {
+				self.collection.reset(data);
+				self.render();
+				self.el.find('input[name=query]').val(query)
+			});
+		},
+		events: {
+			'click button.buscar' : 'search'
 		}
 	});
 	
@@ -177,7 +225,7 @@ $(document).ready(function() {
 				self.render();	
 			});
     		},
-    		createPage: function() {
+    	createPage: function() {
     			var self = this;
     			
     			$('#createPageDialog').dialog({
@@ -222,4 +270,6 @@ $(document).ready(function() {
 		collection: pages
 	});
 	pview.load();
+	
+	var searchView = new SearchPageView({});
 });

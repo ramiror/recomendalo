@@ -26,9 +26,11 @@
     %label Nombre de usuario
     %input{:type=>'text', :name=>'username'}
     %label Password
-    %input{:type=>'text', :name=>'password'}
+    %input{:type=>'password', :name=>'password'}
+    %label Repeat password
+    %input{:type=>'password', :name=>'repeat_password'}
 
 #loginDialog
   %form{:action=>'/login', :method=>'post'}
     %input{:type=>'text', :name=>'username'}
-    %input{:type=>'text', :name=>'password'}
+    %input{:type=>'password', :name=>'password'}
