@@ -32,3 +32,8 @@
 	display:none;
 }
 
+.pageButton {
+	cursor:pointer;
+	color:red;
+	font-family:sans-serif;
+}

@@ -216,6 +216,16 @@ post '/pages' do
 	end
 end
 
+# crea una recomendación
+post '/recommendations' do	
+	fs = Follow.all :uid2=>session[:uid]
+	fs.each do |f|
+		r = Recommendation.new :creator_id => session[:uid], :user_id => f.uid1, :state => NEW, :page_id => params[:page_id]
+		r.save
+	end
+	'success'
+end
+
 # devuelve las páginas del usuario
 get '/pages' do
 	pages = Page.all :creator_id => session[:uid]
@@ -231,6 +241,11 @@ get '/search' do
 		pages += engine.search params[:query]
 	end
 	pages.to_json
+end
+
+# devuelve todos los seguidores del usuario actual
+get '/followers' do
+
 end
 
 delete '/pages/:pid' do |pid|

@@ -110,14 +110,22 @@ $(document).ready(function() {
 
 	var PageView = Backbone.View.extend({
 		tagName: 'li', // name of (orphan) root tag in this.el
-		initialize: function(){
- 			_.bindAll(this, 'render', 'unrender', 'remove', 'edit'); // every function that uses 'this' as the current object should be in here
- 			
+		initialize: function(opts){
+ 			_.bindAll(this, 'render', 'unrender', 'remove', 'edit', 'recommend'); // every function that uses 'this' as the current object should be in here
  			this.model.bind('change', this.render);
 			this.model.bind('remove', this.unrender);
 		},
 		render: function(){
-			var compiled = _.template('<div class="page-title"><%= title %></div> <div class="page-description"><%= desc %></div> <div class="clear"></div> &nbsp;<span class="edit" style="cursor:pointer; color:red; font-family:sans-serif;">[editar]</span> &nbsp;<span class="delete" style="cursor:pointer; color:red; font-family:sans-serif;">[borrar]</span>');
+			var html = '<div class="page-title"><%= title %></div> <div class="page-description"><%= desc %></div> <div class="clear"></div>';
+			if (this.options.buttons.recommend) 
+				html += '<span class="recommend pageButton">[recomendar]</span>';
+			if (this.options.buttons.edit) 
+				html += '<span class="edit pageButton">[editar]</span>';
+			if (this.options.buttons.remove) 
+				html += '<span class="delete pageButton">[borrar]</span>';
+			
+			var compiled = _.template(html);
+			
 			$(this.el).html(compiled({title:this.model.get('title'), desc: this.model.get('description')}));
 			return this; // for chainable calls, like .render().el
     		},
@@ -131,9 +139,20 @@ $(document).ready(function() {
 		remove: function() {
 			this.model.destroy();
 		},
+		recommend: function() {
+			$.ajax('/recommendations', {
+					data: {
+						page_id: this.model.get('id'),
+					},
+					type:'POST'
+			}, function(data) {
+					console.log(data);
+			});
+		},
 		events: {
 			'click span.delete': 'remove',
 			'click span.edit': 'edit',
+			'click span.recommend': 'recommend'
 		}
 	});
 	
@@ -167,7 +186,12 @@ $(document).ready(function() {
 		},
 		appendItem: function(item){
 			var pageView = new PageView({
-				model: item
+				model: item,
+				buttons:{
+					recommend:true,
+					remove:false,
+					edit:false
+				}
 			});
 			$('ul', this.el).append(pageView.render().el);
 		},
@@ -214,7 +238,12 @@ $(document).ready(function() {
 		},
 		appendItem: function(item){
 			var pageView = new PageView({
-				model: item
+				model: item,
+				buttons:{
+					recommend:false,
+					remove:true,
+					edit:true
+				}
 			});
 			$('ul', this.el).append(pageView.render().el);
     		},
