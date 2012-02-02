@@ -25,3 +25,13 @@ var PageList = Backbone.Collection.extend({
 	model: PageModel,
 	url: host+'pages'
 });
+
+var FollowerList = Backbone.Collection.extend({
+	model:UserModel,
+	url:host+'followers'
+});
+
+var FollowingList = Backbone.Collection.extend({
+	model:UserModel,
+	url:host+'followeds'
+});

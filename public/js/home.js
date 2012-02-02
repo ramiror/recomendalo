@@ -286,6 +286,135 @@ $(document).ready(function() {
 		}
 	});
 	
+	var UserView = Backbone.View.extend({
+		tagName: 'li', // name of (orphan) root tag in this.el
+		initialize: function(opts){
+ 			_.bindAll(this, 'render', 'unrender', 'follow', 'unfollow', 'profile'); // every function that uses 'this' as the current object should be in here
+ 			this.model.bind('change', this.render);
+			this.model.bind('remove', this.unrender);
+		},
+		render: function(){
+			var html = '<div class="page-title"><%= username %></div> <div class="clear"></div>';
+			if (this.options.buttons.follow) 
+				html += '<span class="follow userButton">[seguir]</span>';
+			if (this.options.buttons.unfollow) 
+				html += '<span class="unfollow userButton">[dejar de seguir]</span>';
+			
+			var compiled = _.template(html);
+			
+			$(this.el).html(compiled({username:this.model.get('username')}));
+			return this; // for chainable calls, like .render().el
+    		},
+		unrender: function(){
+			$(this.el).remove();
+		},
+		follow: function() {
+			console.log("seguir");
+		},
+		unfollow: function() {
+			console.log("dejar de seguir");
+		},
+		profile: function() {
+			console.log("dejar de seguir");
+		},
+		events: {
+			'click span.follow': 'follow',
+			'click span.unfollow': 'unfollow'
+			//TODO: agregar el ver perfil cuando el usuario clickea en la foto.
+		}
+	});
+	
+	var FollowersView = Backbone.View.extend({
+		el:$('#followers'),
+		initialize: function(opts) {
+			_.bindAll(this, 'render', 'load', 'appendItem'); // every function that uses 'this' as the current object should be in here
+			if (opts.collection != undefined) {
+				this.collection = opts.collection;
+			} else {
+				this.collection = new FollowerList();
+			}
+			
+			this.collection.bind('add', this.appendItem); // collection event bind
+			this.render();
+		},
+		//render() now introduces a button to add a new list item.
+		render: function() {
+			var self = this;
+			
+			$(this.el).html(''); //borramos datos del elemento, si los hubiera
+			
+			$(this.el).append("<ul></ul>");
+			
+			_(this.collection.models).each(function(item){ // in case collection is not empty
+		        	self.appendItem(item);
+		      	}, this);
+		},
+		appendItem: function(item){
+			var user = new UserModel(item.get('follower'));
+			var userView = new UserView({
+				model: user,
+				buttons:{
+					follow:true,
+					unfollow:true
+				}
+			});
+			$('ul', this.el).append(userView.render().el);
+		},
+		load: function() {
+			var self = this;
+			$.getJSON('/followers', function(data) {
+				self.collection.reset(data);
+				self.render();	
+			});
+		},
+		events: {}
+	});
+	
+	var FollowingView = Backbone.View.extend({
+		el:$('#followeds'),
+		initialize: function(opts) {
+			_.bindAll(this, 'render', 'load', 'appendItem'); // every function that uses 'this' as the current object should be in here
+			if (opts.collection != undefined) {
+				this.collection = opts.collection;
+			} else {
+				this.collection = new FollowingList();
+			}
+			
+			this.collection.bind('add', this.appendItem); // collection event bind
+			this.render();
+		},
+		//render() now introduces a button to add a new list item.
+		render: function() {
+			var self = this;
+			
+			$(this.el).html(''); //borramos datos del elemento, si los hubiera
+			
+			$(this.el).append("<ul></ul>");
+			
+			_(this.collection.models).each(function(item){ // in case collection is not empty
+		        	self.appendItem(item);
+		      	}, this);
+		},
+		appendItem: function(item){
+			var user = new UserModel(item.get('followed'));
+			var userView = new UserView({
+				model: user,
+				buttons:{
+					follow:true,
+					unfollow:true
+				}
+			});
+			$('ul', this.el).append(userView.render().el);
+		},
+		load: function() {
+			var self = this;
+			$.getJSON('/followeds', function(data) {
+				self.collection.reset(data);
+				self.render();	
+			});
+		},
+		events: {}
+	});
 
 	// inicialización
 	var recommendations = new RList();
@@ -301,4 +430,10 @@ $(document).ready(function() {
 	pview.load();
 	
 	var searchView = new SearchPageView({});
+	
+	var followersView = new FollowersView({});
+	followersView.load();
+	
+	var followedsView = new FollowingView({});
+	followedsView.load();
 });

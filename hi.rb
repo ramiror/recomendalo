@@ -29,7 +29,6 @@ DUMPED = 4
 
 ### MODELS
 
-#TODO: cambiar 'obj' a 'page'
 class Page
   include DataMapper::Resource
   property :id,         Serial
@@ -54,6 +53,12 @@ class User
   validates_presence_of :password
 
   has n, :recommendations, :throughs => :creator_id
+  # estos son intermedios
+  has n, :follows, 'Follow', :child_key => [:follower_id]
+  has n, :followings, 'Follow', :child_key => [:followed_id]
+  # estas son las asociaciones finales, las que vamos a usar en general.
+  has n, :followers, self, :through => :follows, :via => :follower
+  has n, :followeds, self, :through => :followings, :via => :followed
 end
 
 class Recommendation
@@ -73,16 +78,13 @@ class Recommendation
   belongs_to :page
 end
 
-class Friendship
-  include DataMapper::Resource
-  property :uid1,       Integer, :key => true
-  property :uid2,       Integer, :key => true
-end
-
 class Follow
   include DataMapper::Resource
-  property :uid1,       Integer, :key => true
-  property :uid2,       Integer, :key => true
+  property :follower_id,       Integer, :key => true
+  property :followed_id,       Integer, :key => true
+  
+  belongs_to :follower, 'User'
+  belongs_to :followed, 'User'
 end
 
 DataMapper.finalize
@@ -102,10 +104,6 @@ end
 
 get '/' do
 	haml :index
-end
-
-get '/register' do
-	haml :register
 end
 
 get '/home' do
@@ -134,13 +132,15 @@ get '/users' do
 	haml :users
 end
 
+# TODO: pasar a los métodos HTTP correspondientes.
 get '/users/follow/:uid' do |uid|
-	@user = User.first :id => uid
+	user = User.first :id => uid
 	
-	if !@user
+	if !user
 		return "Usuario inválido"
 	end	
-	f = Follow.new(:uid1=>session[:uid], :uid2=>uid)
+	
+	f = Follow.new(:follower_id=>session[:uid], :followed_id=>uid)
 	if f.save
 		redirect '/home'
 	else
@@ -150,7 +150,7 @@ end
 
 #untested
 get '/users/unfollow/:uid' do |uid|
-	f = Follow.first(:uid2=>uid)
+	f = Follow.first(:followed_id=>uid)
 	if f
 		f.destroy
 	else
@@ -245,9 +245,17 @@ end
 
 # devuelve todos los seguidores del usuario actual
 get '/followers' do
-
+	followers = Follow.all :followed_id => session[:uid]
+	followers.to_json(:methods => :follower)
 end
 
+# devuelve todos los usuarios que el usuario actual está siguiendo
+get '/followeds' do
+	followers = Follow.all :follower_id => session[:uid]
+	followers.to_json(:methods => :followed)
+end
+
+# borra una página
 delete '/pages/:pid' do |pid|
 	page = Page.first :id => pid
 	if page.creator_id == session[:uid]
@@ -255,6 +263,7 @@ delete '/pages/:pid' do |pid|
 	end
 end
 
+# crea un usuario
 post '/register' do
 	u = User.new(params)
 	if u.save
