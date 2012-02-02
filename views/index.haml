@@ -25,6 +25,10 @@
   %form{:action=>'/register', :method=>'post'}
     %label Nombre de usuario
     %input{:type=>'text', :name=>'username'}
+    %label Email
+    %input{:type=>'text', :name=>'email'}
+    %label Nombre completo
+    %input{:type=>'text', :name=>'fullname'}
     %label Password
     %input{:type=>'password', :name=>'password'}
     %label Repeat password
@@ -32,5 +36,5 @@
 
 #loginDialog
   %form{:action=>'/login', :method=>'post'}
-    %input{:type=>'text', :name=>'username'}
+    %input{:type=>'text', :name=>'login'}
     %input{:type=>'password', :name=>'password'}

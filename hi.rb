@@ -45,12 +45,26 @@ end
 class User
   include DataMapper::Resource
   property :id,         Serial
-  property :username,   String
+  property :email,      String
   property :password,   String
   property :created_at, DateTime
+  property :fullname,   String
+  property :fullname,   String
+  property :biography,  String
+  property :website,    String
+  property :username,   String
 
+  validates_presence_of :fullname
   validates_presence_of :username
+  validates_presence_of :email
   validates_presence_of :password
+  
+  validates_confirmation_of :password, :confirm => :repeat_password
+  
+  validates_uniqueness_of :email
+  validates_uniqueness_of :username
+  
+  attr_accessor :repeat_password
 
   has n, :recommendations, :throughs => :creator_id
   # estos son intermedios
@@ -95,26 +109,27 @@ enable :sessions, :logging, :raise_errors
 ### HELPERS
 
 helpers do
-	def ulink(uid, username)
-		"<a href='/user/#{uid}'>#{username}</a>"
+	def ulink(uid, fullname)
+		"<a href='/user/#{uid}'>#{fullname}</a>"
 	end
 end
 
-### ACTIONS
+### ACTIONS (páginas)
 
 get '/' do
 	haml :index
 end
 
 get '/home' do
+	@user = User.first :id => session[:uid]
 	haml :home
 end
 
 post '/login' do
-	u = User.all(:username => params[:username], :password => params[:password])
+	u = User.all(:email => params[:login], :password => params[:password]) | User.all(:username => params[:login], :password => params[:password])
 	if u.size > 0
 		session[:uid] = u[0].id
-		session[:username] = u[0].username
+		session[:fullname] = u[0].fullname
 		redirect '/home'
 	else
 		'Autenticación inválida'
@@ -123,7 +138,7 @@ end
 
 get '/logout' do
 	session[:uid] = nil
-	session[:username] = nil
+	session[:fullname] = nil
 	redirect "/", 303
 end
 
@@ -131,6 +146,13 @@ get '/users' do
 	@users = User.all
 	haml :users
 end
+
+get '/user/:uid' do |uid|
+	@user = User.first :id => uid
+	haml :user
+end
+
+### API METHODS
 
 # TODO: pasar a los métodos HTTP correspondientes.
 get '/users/follow/:uid' do |uid|
@@ -157,13 +179,6 @@ get '/users/unfollow/:uid' do |uid|
 		"Follow inválido"
 	end
 end
-
-get '/user/:uid' do |uid|
-	@user = User.first :id => uid
-	haml :user
-end
-
-### API METHODS
 
 # actualiza una recomendación
 put '/recommendations/:rid' do |rid|
@@ -268,10 +283,33 @@ post '/register' do
 	u = User.new(params)
 	if u.save
 		session[:uid] = u.id
-		session[:username] = u.username
+		session[:fullname] = u.fullname
 		redirect '/home'
 	else
 		"No se pudo guardar el usuario "+params.inspect
+	end
+end
+
+# edita un usuario
+post '/users' do
+	u = User.first :id => session[:uid]
+	u.attributes = params
+	if u.save
+		session[:fullname] = u.fullname
+		'success'
+	else
+		'failure'
+	end
+end
+
+# muestra la página del usuario
+get '/:username' do |username|
+	@user = User.first :username => username
+	
+	if @user 
+		haml :profile
+	else
+		halt 404
 	end
 end
 

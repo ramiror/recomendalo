@@ -296,9 +296,9 @@ $(document).ready(function() {
 		render: function(){
 			var html = '<div class="page-title"><%= username %></div> <div class="clear"></div>';
 			if (this.options.buttons.follow) 
-				html += '<span class="follow userButton">[seguir]</span>';
+				html += '<span class="follow pageButton">[seguir]</span>';
 			if (this.options.buttons.unfollow) 
-				html += '<span class="unfollow userButton">[dejar de seguir]</span>';
+				html += '<span class="unfollow pageButton">[dejar de seguir]</span>';
 			
 			var compiled = _.template(html);
 			
@@ -355,7 +355,7 @@ $(document).ready(function() {
 				model: user,
 				buttons:{
 					follow:true,
-					unfollow:true
+					unfollow:false
 				}
 			});
 			$('ul', this.el).append(userView.render().el);
@@ -400,7 +400,7 @@ $(document).ready(function() {
 			var userView = new UserView({
 				model: user,
 				buttons:{
-					follow:true,
+					follow:false,
 					unfollow:true
 				}
 			});
@@ -436,4 +436,28 @@ $(document).ready(function() {
 	
 	var followedsView = new FollowingView({});
 	followedsView.load();
+	
+	//dialogs
+	
+	$('#editProfileDialog').dialog({
+		title: 'Editar perfil',
+		buttons: {
+			'Editar': function() {
+				$.post('/users', $(this).children('form').first().serialize(), function(response) {
+					console.log(response);
+					if (response == 'success') {
+						location.reload();
+					}
+				});
+			},
+			'Cancelar': function() {
+				$(this).dialog('close');
+			}
+		},
+		autoOpen: false
+	});
 });
+
+function editProfile() {
+	$('#editProfileDialog').dialog('open');
+}

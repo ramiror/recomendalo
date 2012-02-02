@@ -20,6 +20,12 @@
 	float:right;
 }
 
+.pageButton {
+	cursor:pointer;
+	color:red;
+	font-family:sans-serif;
+}
+
 #createPageDialog {
 	display:none;
 }
@@ -32,8 +38,10 @@
 	display:none;
 }
 
-.pageButton {
-	cursor:pointer;
-	color:red;
-	font-family:sans-serif;
+#editProfileDialog {
+	display:none;
+}
+
+#editProfileDialog * {
+	display:block;
 }

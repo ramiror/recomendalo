@@ -9,7 +9,7 @@
 %link(rel="stylesheet" type="text/css" href="css/styles.css")
 %link(rel="stylesheet" type="text/css" href="css/ui-darkness/jquery-ui-1.8.17.custom.css")
 
-%h2= "Bienvenido #{session[:username]}!"
+%h2= "Bienvenido #{session[:fullname]}!"
 
 :javascript
   var NEW = #{NEW};
@@ -35,6 +35,8 @@
 #followeds
 
 %a{:href=>'/users'} Ver lista de usuarios
+%a{:href=>'javascript:editProfile();'} Editar perfil
+%a{:href=>'/logout'} Logout
 
 #createPageDialog
   %label{:for=>'pageTitle'} Título
@@ -43,3 +45,14 @@
   %textarea{:name=>'description', :id=>'pageDescription'}
   %label{:for=>'pageWebsite'} Website
   %input{:name=>'website', :id=>'pageWebsite'}
+
+#editProfileDialog
+  %form{:method=>'post', :action=>'users'}
+    %label nombre y apellido
+    %input{:type=>'text', :name=>'fullname', :value => "#{@user.fullname}"}
+    %label email
+    %input{:type=>'text', :name=>'email', :value => "#{@user.email}"}
+    %label biography
+    %textarea{:name=>'biography', :value => "#{@user.biography}"}
+    %label website
+    %input{:type=>'text', :name=>'website', :value => "#{@user.website}"}
