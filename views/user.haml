@@ -1,8 +1,0 @@
-%h2= @user.username
-%a{:href=>'/follow/'+@user.id.to_s} Seguir
-%h3 Recomendaciones
-- @user.recommendations.each do |r|
-  .recommendation
-    %h4= r.title
-    %p= r.description
-

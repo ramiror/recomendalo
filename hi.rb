@@ -109,47 +109,9 @@ enable :sessions, :logging, :raise_errors
 ### HELPERS
 
 helpers do
-	def ulink(uid, fullname)
-		"<a href='/user/#{uid}'>#{fullname}</a>"
+	def ulink(username, fullname)
+		"<a href='/#{username}'>#{fullname}</a>"
 	end
-end
-
-### ACTIONS (páginas)
-
-get '/' do
-	haml :index
-end
-
-get '/home' do
-	@user = User.first :id => session[:uid]
-	haml :home
-end
-
-post '/login' do
-	u = User.all(:email => params[:login], :password => params[:password]) | User.all(:username => params[:login], :password => params[:password])
-	if u.size > 0
-		session[:uid] = u[0].id
-		session[:fullname] = u[0].fullname
-		redirect '/home'
-	else
-		'Autenticación inválida'
-	end
-end
-
-get '/logout' do
-	session[:uid] = nil
-	session[:fullname] = nil
-	redirect "/", 303
-end
-
-get '/users' do
-	@users = User.all
-	haml :users
-end
-
-get '/user/:uid' do |uid|
-	@user = User.first :id => uid
-	haml :user
 end
 
 ### API METHODS
@@ -300,6 +262,39 @@ post '/users' do
 	else
 		'failure'
 	end
+end
+
+### ACTIONS (páginas)
+
+get '/' do
+	haml :index
+end
+
+get '/home' do
+	@user = User.first :id => session[:uid]
+	haml :home
+end
+
+post '/login' do
+	u = User.all(:email => params[:login], :password => params[:password]) | User.all(:username => params[:login], :password => params[:password])
+	if u.size > 0
+		session[:uid] = u[0].id
+		session[:fullname] = u[0].fullname
+		redirect '/home'
+	else
+		'Autenticación inválida'
+	end
+end
+
+get '/logout' do
+	session[:uid] = nil
+	session[:fullname] = nil
+	redirect "/", 303
+end
+
+get '/users' do
+	@users = User.all
+	haml :users
 end
 
 # muestra la página del usuario

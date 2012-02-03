@@ -294,7 +294,7 @@ $(document).ready(function() {
 			this.model.bind('remove', this.unrender);
 		},
 		render: function(){
-			var html = '<div class="page-title"><%= username %></div> <div class="clear"></div>';
+			var html = '<div class="page-title"><a href="/<%= username %>"><%= fullname %></a></div> <div class="clear"></div>';
 			if (this.options.buttons.follow) 
 				html += '<span class="follow pageButton">[seguir]</span>';
 			if (this.options.buttons.unfollow) 
@@ -302,7 +302,8 @@ $(document).ready(function() {
 			
 			var compiled = _.template(html);
 			
-			$(this.el).html(compiled({username:this.model.get('username')}));
+			var fullname = this.model.get('fullname') || this.model.get('username');
+			$(this.el).html(compiled({username:this.model.get('username'), fullname:fullname}));
 			return this; // for chainable calls, like .render().el
     		},
 		unrender: function(){
