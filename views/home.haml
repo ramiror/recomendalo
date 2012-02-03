@@ -52,6 +52,6 @@
     %label email
     %input{:type=>'text', :name=>'email', :value => "#{@user.email}"}
     %label biography
-    %textarea{:name=>'biography', :value => "#{@user.biography}"}
+    %textarea{:name=>'biography'}= @user.biography
     %label website
     %input{:type=>'text', :name=>'website', :value => "#{@user.website}"}
