@@ -45,3 +45,39 @@
 #editProfileDialog * {
 	display:block;
 }
+
+body {
+	color:white;
+	background:blue;
+	padding:0;
+	margin:0;
+}
+
+body a {
+	color:white;
+}
+
+.header {
+	font-size:25;
+	padding:5px;
+	color:white;
+	background:black;
+}
+
+.barbutton {
+	font-size:15;
+	padding:10px;
+}
+
+#main {
+	color:black;
+	padding:10px;
+	background:lightgray;
+}
+
+.section {
+	padding:10px;
+	background:black;
+	margin:10px;
+	float:left;
+}

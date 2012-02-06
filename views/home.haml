@@ -9,10 +9,10 @@
 %link(rel="stylesheet" type="text/css" href="css/styles.css")
 %link(rel="stylesheet" type="text/css" href="css/ui-darkness/jquery-ui-1.8.17.custom.css")
 
-%h2= "Bienvenido #{session[:fullname]}!"
-
-%a{:href=>'javascript:editProfile();'} Editar perfil
-%a{:href=>'/logout'} Logout
+.header
+  Bienvenido #{session[:fullname]}!
+  %a.right.barbutton{:href=>'javascript:editProfile();'} Editar perfil
+  %a.right.barbutton{:href=>'/logout'} Logout
 
 :javascript
   var NEW = #{NEW};
@@ -20,22 +20,27 @@
   var ALREADY_SEEN = #{ALREADY_SEEN};
   var DUMPED = #{DUMPED};
 
-%h3 Recomendaciones
-%ul#recommendations
+.section
+  %h3 Recomendaciones
+  %ul#recommendations
 
-%h3 Buscar
-%p Buscá algo y recomendalo!
-#searchpages
+.section
+  %h3 Buscar
+  %p Buscá algo y recomendalo!
+  #searchpages
 
-%h3 Mis páginas
-%p Si lo que estás buscando no existe, crealo!
-#pages
+.section
+  %h3 Mis páginas
+  %p Si lo que estás buscando no existe, crealo!
+  #pages
 
-%h3 Seguidores
-#followers
+.section
+  %h3 Seguidores
+  #followers
 
-%h3 Gente a la que sigo
-#followeds
+.section
+  %h3 Gente a la que sigo
+  #followeds
 
 #createPageDialog
   %label{:for=>'pageTitle'} Título

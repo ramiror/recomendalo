@@ -9,13 +9,14 @@
 %link(rel="stylesheet" type="text/css" href="css/styles.css")
 %link(rel="stylesheet" type="text/css" href="css/ui-darkness/jquery-ui-1.8.17.custom.css")
 
-%h2 Bienvenido a Recomendalo! La red social de recomendaciones
-- if session[:uid]
-  %p= 'Bienvenido '+ulink(session[:uid], session[:username])
-  %a{:href=>'/logout'} Salir
-- else
-  %a{:href=>'javascript:register();'} Registrate
-  %a{:href=>'javascript:login();'} Login
+.header 
+  Recomendalo! La red social de recomendaciones
+  - if session[:uid]
+    %p= 'Bienvenido '+ulink(session[:uid], session[:username])
+    %a.right.barbutton{:href=>'/logout'} Salir
+  - else
+    %a.right.barbutton{:href=>'javascript:register();'} Registrate
+    %a.right.barbutton{:href=>'javascript:login();'} Login
     
 #main
   %p Este espacio es para que puedas recomendar a tus amigos, conocidos o gente que admirás aquellas obras, o lo que sea que te guste y te parezca que merece esparcirse.
