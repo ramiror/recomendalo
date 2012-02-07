@@ -111,12 +111,19 @@ $(document).ready(function() {
 	var PageView = Backbone.View.extend({
 		tagName: 'li', // name of (orphan) root tag in this.el
 		initialize: function(opts){
- 			_.bindAll(this, 'render', 'unrender', 'remove', 'edit', 'recommend'); // every function that uses 'this' as the current object should be in here
+ 			_.bindAll(this, 'render', 'unrender', 'remove', 'edit', 'recommend','upload_image'); // every function that uses 'this' as the current object should be in here
  			this.model.bind('change', this.render);
 			this.model.bind('remove', this.unrender);
 		},
 		render: function(){
-			var html = '<div class="page-title"><%= title %></div> <div class="page-description"><%= desc %></div> <div class="clear"></div>';
+			var image;
+			if (this.model.get('image')) {
+				image = '<img src="" class="page-image" style="background: url(/upload/'+this.model.get('image')+');"/>';
+			} else {
+				image = '<img src="" class="page-image" alt="No image"/>';
+			}
+			
+			var html = image + '<div class="page-title"><%= title %></div> <div class="page-description"><%= desc %></div> <div class="clear"></div>';
 			if (this.options.buttons.recommend) 
 				html += '<span class="recommend pageButton">[recomendar]</span>';
 			if (this.options.buttons.edit) 
@@ -127,7 +134,7 @@ $(document).ready(function() {
 			var compiled = _.template(html);
 			
 			$(this.el).html(compiled({title:this.model.get('title'), desc: this.model.get('description')}));
-			return this; // for chainable calls, like .render().el
+				return this; // for chainable calls, like .render().el
     		},
 		unrender: function(){
 			$(this.el).remove();
@@ -138,6 +145,20 @@ $(document).ready(function() {
 		},
 		remove: function() {
 			this.model.destroy();
+		},
+		upload_image: function() {
+			$('#page-id-field').val(this.model.get('id'));
+			$('#uploadImageDialog').dialog({
+				title:'Subir imágen',
+				buttons: {
+					'Subir':function() {
+						$('form', this).submit();
+					},
+					'Cancelar':function() {
+						$(this).dialog('close');
+					}
+				}
+			});
 		},
 		recommend: function() {
 			$.ajax('/recommendations', {
@@ -152,7 +173,8 @@ $(document).ready(function() {
 		events: {
 			'click span.delete': 'remove',
 			'click span.edit': 'edit',
-			'click span.recommend': 'recommend'
+			'click span.recommend': 'recommend',
+			'click img.page-image': 'upload_image'
 		}
 	});
 	
@@ -294,7 +316,7 @@ $(document).ready(function() {
 			this.model.bind('remove', this.unrender);
 		},
 		render: function(){
-			var html = '<div class="page-title"><a href="/<%= username %>"><%= fullname %></a></div> <div class="clear"></div>';
+			var html = '<img src="" class="user-image"/><div class="page-title"><a href="/<%= username %>"><%= fullname %></a></div> <div class="clear"></div>';
 			if (this.options.buttons.follow) 
 				html += '<span class="follow pageButton">[seguir]</span>';
 			if (this.options.buttons.unfollow) 

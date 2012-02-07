@@ -60,3 +60,9 @@
     %textarea{:name=>'biography'}= @user.biography
     %label website
     %input{:type=>'text', :name=>'website', :value => "#{@user.website}"}
+
+#uploadImageDialog.dialog
+  %form{:method=>'post', :enctype=>'multipart/form-data', :action=>'/pages/image'}
+    %input{:type=>'hidden', :name=>'page_id', :id=>'page-id-field'}
+    %label Imágen
+    %input{:type=>'file', :name=>'image'}

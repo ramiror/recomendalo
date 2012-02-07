@@ -108,7 +108,8 @@ end
 # crea una página
 post '/pages' do
 	json = JSON.parse request.body.read
-	page = Page.new(json.merge(:creator_id=>session[:uid]))		
+	page = Page.new(json.merge(:creator_id=>session[:uid]))
+	
 	if page.save
 		# recomendamos el nuevo objeto a todos los que tenemos alrededor
 		fs = Follow.all :uid2=>session[:uid]
@@ -121,6 +122,26 @@ post '/pages' do
 	else
 		halt 500
 	end
+end
+
+# postea una imágen
+post '/pages/image' do
+	page = Page.first :id => params[:page_id]
+	
+	if !page
+		return 'invalid page id'
+	end
+	
+	if !params['image'][:tempfile]
+		return 'invalid file'
+	end
+	
+	filename = 'page_'+params[:page_id]+'_'+Time.now.to_i.to_s
+	File.open('public/upload/'+filename, "wb") { |f| f.write(params['image'][:tempfile].read) }
+	
+	page.image = filename
+	page.save
+	halt 200
 end
 
 # crea una recomendación

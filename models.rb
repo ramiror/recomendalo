@@ -6,6 +6,7 @@ class Page
   property :creator_id, Integer
   property :description,Text
   property :website,    String
+  property :image,      String
 
   validates_presence_of :title
   validates_presence_of :description

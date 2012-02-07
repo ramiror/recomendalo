@@ -20,6 +20,10 @@
 	float:right;
 }
 
+.hidden {
+	display:none;
+}
+
 .pageButton {
 	cursor:pointer;
 	color:red;
@@ -30,12 +34,24 @@
 	display:none;
 }
 
+#createPageDialog * {
+	display:block;
+}
+
 #registerDialog {
 	display:none;
 }
 
+#registerDialog * {
+	display:block;
+}
+
 #loginDialog {
 	display:none;
+}
+
+#loginDialog * {
+	display:block;
 }
 
 #editProfileDialog {
@@ -80,4 +96,19 @@ body a {
 	background:black;
 	margin:10px;
 	float:left;
+}
+
+.page-image {
+	width:50px;
+	height:50px;
+	background:lightgray;
+}
+
+.dialog {
+	display:none;
+	
+}
+
+.dialog * {
+	display:block;
 }
