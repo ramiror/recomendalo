@@ -112,9 +112,9 @@ post '/pages' do
 	
 	if page.save
 		# recomendamos el nuevo objeto a todos los que tenemos alrededor
-		fs = Follow.all :uid2=>session[:uid]
+		fs = Follow.all :followed_id=>session[:uid]
 		fs.each do |f|
-			r = Recommendation.new :creator_id => session[:uid], :user_id => f.uid1, :state => NEW, :page_id => page.id
+			r = Recommendation.new :creator_id => session[:uid], :user_id => f.follower_id, :state => NEW, :page_id => page.id
 			r.save
 		end
 
