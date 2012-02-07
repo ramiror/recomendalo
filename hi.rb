@@ -10,14 +10,14 @@ require 'json'
 
 ### CONFIGURATION
 
-DataMapper.setup(:default, {
-    :adapter  => 'mysql',
-    :host     => 'localhost',
-    :username => 'root' ,
-    :password => '123456',
-    :database => 'recomiendo'})  
-
 DataMapper::Logger.new(STDOUT, :debug)
+
+if File.exists? "config.rb"
+	require './config.rb'
+else
+	puts "No hay ningún archivo config.rb creado."
+	exit
+end
 
 ### CONSTANTS
 

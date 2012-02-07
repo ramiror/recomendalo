@@ -1,0 +1,12 @@
+# esta es la configuración
+# de la base de datos
+# este archivo debe ser renombrado 
+# a config.rb para que la aplicación funcione
+
+DataMapper.setup(:default, {
+    :adapter  => 'mysql',
+    :host     => 'localhost',
+    :username => 'xxxx' ,
+    :password => 'xxxx',
+    :database => 'xxxx'
+})  

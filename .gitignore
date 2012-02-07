@@ -1,2 +1,4 @@
 *~
 tmp/*
+public/upload/*
+config.rb
