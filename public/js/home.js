@@ -10,21 +10,35 @@ $(document).ready(function() {
 			this.model.bind('remove', this.unrender);
 		},
 		render: function(){
-			var compiled = _.template('<div style="color:black;"><%= title %></div> <div><%= desc %></div> <div class="clear"></div> &nbsp;<span class="viewlater" style="cursor:pointer; color:red; font-family:sans-serif;">[ver mas tarde]</span> &nbsp;<span class="alreadyseen" style="cursor:pointer; color:red; font-family:sans-serif;">[ya lo vi]</span> &nbsp;<span class="delete" style="cursor:pointer; color:red; font-family:sans-serif;">[botar]</span>');
-			$(this.el).html(compiled({title:this.model.get('page').title, desc: this.model.get('page').description}));
+			var html = '';
+			
+			if (this.model.get('page').image) {
+					html += "<img src='<%= image %>' class='recommendation-image left'>";
+			}
+			
+			html += '<h3><%= title %></h3><p><%= desc %></p><div class="clear"></div>';
+			
+			html += '<span class="viewlater pageButton">[ver mas tarde]</span>'+
+				'<span class="alreadyseen pageButton">[ya lo vi]</span>'+
+				'<span class="delete pageButton">[botar]</span>';
+			var compiled = _.template(html);
+			$(this.el).html(compiled({title:this.model.get('page').title, desc: this.model.get('page').description, image: this.model.get('page').image}));
 			return this; // for chainable calls, like .render().el
-    		},
-    		unrender: function(){
+		},
+		unrender: function(){
 			$(this.el).remove();
 		},
 		alreadyseen: function() {
 			this.model.save({state:ALREADY_SEEN});
+			this.unrender();
 		},
 		viewlater: function() {
 			this.model.save({state:QUEUED});
+			this.unrender();
 		},		
 		remove: function() {
 			this.model.save({state:DUMPED});
+			this.unrender();
 		},
 		events: {
 			'click span.delete': 'remove',
@@ -46,7 +60,6 @@ $(document).ready(function() {
 			//this.collection.bind('add', this.appendItem); // collection event binder	      
 			this.render();
 		},
-
 		//render() now introduces a button to add a new list item.
 		render: function() {
 			var self = this;
@@ -118,7 +131,7 @@ $(document).ready(function() {
 		render: function(){
 			var image;
 			if (this.model.get('image')) {
-				image = '<img src="/upload/'+this.model.get('image')+'" class="page-image"/>';
+				image = '<img src="'+this.model.get('image')+'" class="page-image"/>';
 			} else {
 				image = '<img src="" class="page-image" alt="No image"/>';
 			}

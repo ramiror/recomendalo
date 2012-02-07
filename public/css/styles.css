@@ -1,6 +1,6 @@
 #recommendations li {
 	border: blue 1px;
-	background: yellow;
+	background: lightgray;
 	width:300px;
 }
 
@@ -98,6 +98,13 @@ body a {
 	width:50px;
 	height:50px;
 	background:lightgray;
+}
+
+.recommendation-image {
+	width:50px;
+	height:50px;
+	background:lightgray;
+	padding: 5px;
 }
 
 .user-image {

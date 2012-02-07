@@ -139,16 +139,16 @@ post '/pages/image' do
 	filename = 'page_'+params[:page_id]+'_'+Time.now.to_i.to_s
 	File.open('public/upload/'+filename, "wb") { |f| f.write(params['image'][:tempfile].read) }
 	
-	page.image = filename
+	page.image = '/upload/'+filename
 	page.save
 	redirect '/home'
 end
 
 # crea una recomendación
 post '/recommendations' do	
-	fs = Follow.all :uid2=>session[:uid]
+	fs = Follow.all :followed_id => session[:uid]
 	fs.each do |f|
-		r = Recommendation.new :creator_id => session[:uid], :user_id => f.uid1, :state => NEW, :page_id => params[:page_id]
+		r = Recommendation.new :creator_id => session[:uid], :user_id => f.follower_id, :state => NEW, :page_id => params[:page_id]
 		r.save
 	end
 	'success'
