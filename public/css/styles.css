@@ -1,7 +1,3 @@
-#recommendations {
-
-}
-
 #recommendations li {
 	border: blue 1px;
 	background: yellow;
@@ -104,11 +100,20 @@ body a {
 	background:lightgray;
 }
 
+.user-image {
+	width:30px;
+	height:30px;
+	background:lightgray;
+}
+
 .dialog {
-	display:none;
-	
+	display:none;	
 }
 
 .dialog * {
+	display:block;
+}
+
+form * {
 	display:block;
 }

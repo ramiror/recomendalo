@@ -23,6 +23,7 @@ class User
   property :biography,  String
   property :website,    String
   property :username,   String
+  property :photo,      String
 
   validates_presence_of :fullname
   validates_presence_of :username

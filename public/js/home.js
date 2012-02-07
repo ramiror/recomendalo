@@ -118,7 +118,7 @@ $(document).ready(function() {
 		render: function(){
 			var image;
 			if (this.model.get('image')) {
-				image = '<img src="" class="page-image" style="background: url(/upload/'+this.model.get('image')+');"/>';
+				image = '<img src="/upload/'+this.model.get('image')+'" class="page-image"/>';
 			} else {
 				image = '<img src="" class="page-image" alt="No image"/>';
 			}
@@ -316,7 +316,14 @@ $(document).ready(function() {
 			this.model.bind('remove', this.unrender);
 		},
 		render: function(){
-			var html = '<img src="" class="user-image"/><div class="page-title"><a href="/<%= username %>"><%= fullname %></a></div> <div class="clear"></div>';
+			var image; 
+			
+			if (this.model.get('photo')) {
+				image = '<img src="'+this.model.get('photo')+'" class="user-image"/>';
+			} else {
+				image = '<img src="" class="user-image"/>';
+			}
+			var html = image+'<div class="page-title"><a href="/<%= username %>"><%= fullname %></a></div> <div class="clear"></div>';
 			if (this.options.buttons.follow) 
 				html += '<span class="follow pageButton">[seguir]</span>';
 			if (this.options.buttons.unfollow) 

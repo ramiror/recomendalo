@@ -6,11 +6,9 @@
 %script{:type => "text/javascript", :src  => "js/models.js"}
 %script{:type => "text/javascript", :src  => "js/home.js"}
 
-%link(rel="stylesheet" type="text/css" href="css/styles.css")
-%link(rel="stylesheet" type="text/css" href="css/ui-darkness/jquery-ui-1.8.17.custom.css")
-
 .header
   Bienvenido #{session[:fullname]}!
+  %a.right.barbutton{:href=>'/users/photo'} Editar foto
   %a.right.barbutton{:href=>'javascript:editProfile();'} Editar perfil
   %a.right.barbutton{:href=>'/logout'} Logout
 

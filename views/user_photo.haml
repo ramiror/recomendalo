@@ -1,0 +1,11 @@
+%h3 Subí tu foto
+%p Elegí una foto de tu computadora para que aparezca en tu perfil
+
+- if @user.photo
+  %p Foto actual:
+  %img{:src=>@user.photo}
+
+%form{:method=>'post', :enctype=>'multipart-form/data', :action=>'/users/photo'}
+  %label Foto nueva
+  %input{:type=>'file', :name=>'photo'}
+  %input{:type=>'submit'}

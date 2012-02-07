@@ -141,7 +141,7 @@ post '/pages/image' do
 	
 	page.image = filename
 	page.save
-	halt 200
+	redirect '/home'
 end
 
 # crea una recomendación
@@ -216,6 +216,26 @@ post '/users' do
 	end
 end
 
+# sube un avatar de usuario
+post '/users/photo' do
+	user = User.first :id => session[:uid]
+	
+	if !user
+		return 'invalid session'
+	end
+	
+	if !params['photo'][:tempfile]
+		return 'invalid file'
+	end
+	
+	filename = 'user_'+session[:uid].to_s+'_'+Time.now.to_i.to_s
+	File.open('public/upload/'+filename, "wb") { |f| f.write(params['photo'][:tempfile].read) }
+	
+	user.photo = '/upload/'+filename
+	user.save
+	redirect '/home'
+end
+
 ### ACTIONS (páginas)
 
 get '/' do
@@ -258,6 +278,12 @@ get '/:username' do |username|
 	else
 		halt 404
 	end
+end
+
+# formulario de subida de la foto
+get '/users/photo' do
+	@user = User.first :id => session[:uid]
+	haml :user_photo
 end
 
 # SEARCH ENGINES
