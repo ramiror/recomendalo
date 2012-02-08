@@ -1,6 +1,6 @@
 // esto tiene todos los modelos que se usan en la página
 // cambiar esto por CoffeeScript
-var host = 'http://localhost:4567/';
+var host = '/';
 
 var Model = Backbone.Model.extend({});
 
