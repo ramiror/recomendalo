@@ -15,6 +15,7 @@ DataMapper::Logger.new(STDOUT, :debug)
 if File.exists? "config.rb"
 	require './config.rb'
 else
+	#TODO: ver de loguear esto en vez de usar puts
 	puts "No hay ningún archivo config.rb creado."
 	exit
 end
@@ -268,9 +269,13 @@ get '/logout' do
 	redirect "/", 303
 end
 
+get '/users_search' do
+	haml :users_search
+end
+
 get '/users' do
-	@users = User.all
-	haml :users
+	users = User.all
+	users.to_json
 end
 
 # muestra la página del usuario
