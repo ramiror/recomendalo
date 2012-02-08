@@ -119,7 +119,7 @@ post '/pages' do
 			r.save
 		end
 
-		halt 200
+		page.to_json
 	else
 		halt 500
 	end

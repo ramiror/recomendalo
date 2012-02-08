@@ -300,11 +300,12 @@ $(document).ready(function() {
 							description: $('#pageDescription').val(),
 							website: $('#pageWebsite').val()
 						}, {
-							success: function() {
-								console.log("success");
+							success: function(page) {
+								//console.log(page);
+								//console.log("success");
 							},
 							error: function(model, response) {
-								console.log("error");
+								//console.log("error");
 							}
 						});
  						$(this).dialog("close");						
