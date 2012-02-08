@@ -239,7 +239,11 @@ end
 ### ACTIONS (páginas)
 
 get '/' do
-	haml :index
+	if session[:uid]
+		redirect '/home'
+	else
+		haml :index
+	end
 end
 
 get '/home' do

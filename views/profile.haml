@@ -1,6 +1,6 @@
 %h2 #{@user.fullname} (@#{@user.username})
 %p= @user.biography
-%a{:href=>'/follow/'+@user.id.to_s} Seguir
-%a{:href=>'/unfollow/'+@user.id.to_s} Dejar de seguir
+%a{:href=>'/users/follow/'+@user.id.to_s} Seguir
+%a{:href=>'/users/unfollow/'+@user.id.to_s} Dejar de seguir
 
 
