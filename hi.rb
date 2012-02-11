@@ -57,6 +57,11 @@ get '/users/follow/:uid' do |uid|
 	
 	f = Follow.new(:follower_id=>session[:uid], :followed_id=>uid)
 	if f.save
+		# agarramos todas las recomendaciones de este chabón y las creamos para el usuario logueado
+		recommendations = Recommendation.all(:conditions=>{:creator_id => user.id}, :fields=>[:page_id, :creator_id], :unique=>true)
+		recommendations.each do |r|
+			Recommendation.create(:creator_id => r.creator_id, :page_id => r.page_id, :user_id => session[:uid], :state => NEW)
+		end
 		redirect '/home'
 	else
 		"No se pudo guardar el Follow"
@@ -67,10 +72,11 @@ end
 get '/users/unfollow/:uid' do |uid|
 	f = Follow.first(:followed_id=>uid)
 	if f
-		f.destroy
-	else
-		"Follow inválido"
+		if f.destroy
+			redirect '/home'
+		end
 	end
+	"Follow inválido"
 end
 
 # actualiza una recomendación
@@ -283,6 +289,7 @@ get '/:username' do |username|
 	@user = User.first :username => username
 	
 	if @user 
+		@following = Follow.first :follower_id => session[:uid], :followed_id => @user.id
 		haml :profile
 	else
 		halt 404

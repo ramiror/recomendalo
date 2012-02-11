@@ -37,7 +37,7 @@ class User
   
   attr_accessor :repeat_password
 
-  has n, :recommendations, :throughs => :creator_id
+  has n, :recommendations, :child_key => [:creator_id]
   # estos son intermedios
   has n, :follows, 'Follow', :child_key => [:follower_id]
   has n, :followings, 'Follow', :child_key => [:followed_id]
@@ -59,6 +59,8 @@ class Recommendation
   validates_presence_of :user_id
   validates_presence_of :creator_id
   validates_presence_of :page_id
+  
+  validates_uniqueness_of :page_id, :scope => [:creator_id, :user_id]
 
   belongs_to :page
 end

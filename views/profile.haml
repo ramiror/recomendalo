@@ -1,6 +1,19 @@
 %h2 #{@user.fullname} (@#{@user.username})
 %p= @user.biography
-%a{:href=>'/users/follow/'+@user.id.to_s} Seguir
-%a{:href=>'/users/unfollow/'+@user.id.to_s} Dejar de seguir
+
+- if !@following
+  %a{:href=>'/users/follow/'+@user.id.to_s} Seguir
+- else
+  %a{:href=>'/users/unfollow/'+@user.id.to_s} Dejar de seguir
+
+%h4 Recomendaciones
+%ul.recommendations
+  - @user.recommendations.each do |r|
+    %li
+      .recommendation-image
+        %img{:src=>r.page.image, :alt=>r.page.title, :class=>'page-image'}
+      .recommendation-title= r.page.title
+      .recommendation-description= r.page.description
+      .recommenation-creation-date= r.page.created_at
 
 
