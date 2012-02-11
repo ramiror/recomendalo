@@ -18,9 +18,16 @@ $(document).ready(function() {
 			
 			html += '<h3><%= title %></h3><p><%= desc %></p><div class="clear"></div>';
 			
-			html += '<span class="viewlater pageButton">[ver mas tarde]</span>'+
-				'<span class="alreadyseen pageButton">[ya lo vi]</span>'+
-				'<span class="delete pageButton">[botar]</span>';
+			console.log(this.options.section);
+			if (this.options.section != 'own') {
+				if (this.options.section != 'queued')
+					html += '<span class="viewlater pageButton">[ver mas tarde]</span>';
+				if (this.options.section != 'seen')
+					html+='<span class="alreadyseen pageButton">[ya lo vi]</span>';
+				if (this.options.section != 'dumped')	
+					'<span class="delete pageButton">[botar]</span>';
+			}
+				
 			var compiled = _.template(html);
 			$(this.el).html(compiled({title:this.model.get('page').title, desc: this.model.get('page').description, image: this.model.get('page').image}));
 			return this; // for chainable calls, like .render().el
@@ -81,12 +88,14 @@ $(document).ready(function() {
 		},
 		appendItem: function(item){
 			var itemView = new RView({
-				model: item
+				model: item,
+				section: this.section
 			});
 			$('ul', this.el).append(itemView.render().el);
     		},
 		selectNew: function() {
     		var self = this;
+    		this.section = 'new';
 			$.getJSON('/recommendations/new', function(data) {
 				self.collection.reset(data);
 				self.render();	
@@ -94,6 +103,7 @@ $(document).ready(function() {
     	},
     	selectQueued: function() {
     		var self = this;
+    		this.section = 'queued';
 			$.getJSON('/recommendations/queued', function(data) {
 				self.collection.reset(data);
 				self.render();	
@@ -101,6 +111,7 @@ $(document).ready(function() {
     	},
     	selectSeen: function() {
     		var self = this;
+    		this.section = 'seen';
 			$.getJSON('/recommendations/already_seen', function(data) {
 				self.collection.reset(data);
 				self.render();	
@@ -108,6 +119,7 @@ $(document).ready(function() {
     	},
     	selectDumped: function() {
     		var self = this;
+    		this.section = 'dumped';
 			$.getJSON('/recommendations/dumped', function(data) {
 				self.collection.reset(data);
 				self.render();	
@@ -115,6 +127,7 @@ $(document).ready(function() {
     	},
     	selectOwn: function() {
 			var self = this;
+			this.section = 'own';
 			$.getJSON('/recommendations/own', function(data) {
 				self.collection.reset(data);
 				self.render();	
