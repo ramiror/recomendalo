@@ -27,6 +27,7 @@ NEW = 1
 QUEUED = 2
 ALREADY_SEEN = 3
 DUMPED = 4
+OWN = 5
 
 ### MODELS
 
@@ -58,7 +59,7 @@ get '/users/follow/:uid' do |uid|
 	f = Follow.new(:follower_id=>session[:uid], :followed_id=>uid)
 	if f.save
 		# agarramos todas las recomendaciones de este chabón y las creamos para el usuario logueado
-		recommendations = Recommendation.all(:conditions=>{:creator_id => user.id}, :fields=>[:page_id, :creator_id], :unique=>true)
+		recommendations = Recommendation.all :creator_id => user.id, :state => OWN
 		recommendations.each do |r|
 			Recommendation.create(:creator_id => r.creator_id, :page_id => r.page_id, :user_id => session[:uid], :state => NEW)
 		end
@@ -104,6 +105,8 @@ get '/recommendations/:state' do |state|
 			state = ALREADY_SEEN
 		when 'dumped'
 			state = DUMPED
+		when 'own'
+			state = OWN
 		else
 			halt 500
 	end
@@ -121,9 +124,10 @@ post '/pages' do
 		# recomendamos el nuevo objeto a todos los que tenemos alrededor
 		fs = Follow.all :followed_id=>session[:uid]
 		fs.each do |f|
-			r = Recommendation.new :creator_id => session[:uid], :user_id => f.follower_id, :state => NEW, :page_id => page.id
-			r.save
+			Recommendation.create :creator_id => session[:uid], :user_id => f.follower_id, :state => NEW, :page_id => page.id
 		end
+		# creamos un objeto para nosotros mismos (si no tenemos ningún seguidor igual la recomendación aparece en nuestra página)
+		Recommendation.create :creator_id => session[:uid], :user_id => session[:uid], :state => OWN, :page_id => page.id
 
 		page.to_json
 	else
@@ -155,9 +159,9 @@ end
 post '/recommendations' do	
 	fs = Follow.all :followed_id => session[:uid]
 	fs.each do |f|
-		r = Recommendation.new :creator_id => session[:uid], :user_id => f.follower_id, :state => NEW, :page_id => params[:page_id]
-		r.save
+		Recommendation.create :creator_id => session[:uid], :user_id => f.follower_id, :state => NEW, :page_id => params[:page_id]
 	end
+	Recommendation.create :creator_id => session[:uid], :user_id => session[:uid], :state => OWN, :page_id => params[:page_id]
 	'success'
 end
 
@@ -290,6 +294,7 @@ get '/:username' do |username|
 	
 	if @user 
 		@following = Follow.first :follower_id => session[:uid], :followed_id => @user.id
+		@recommendations = Recommendation.all :creator_id => @user.id, :state => OWN
 		haml :profile
 	else
 		halt 404

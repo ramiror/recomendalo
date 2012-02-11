@@ -8,7 +8,7 @@
 
 %h4 Recomendaciones
 %ul.recommendations
-  - @user.recommendations.each do |r|
+  - @recommendations.each do |r|
     %li
       .recommendation-image
         %img{:src=>r.page.image, :alt=>r.page.title, :class=>'page-image'}
