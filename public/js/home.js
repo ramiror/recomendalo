@@ -71,6 +71,7 @@ $(document).ready(function() {
 			$(this.el).append("<button class='queued'>Encoladas</button>");
 			$(this.el).append("<button class='seen'>Vistas</button>");
 			$(this.el).append("<button class='dumped'>Descartadas</button>");
+			$(this.el).append("<button class='own'>Mías</button>");
 			
 			$(this.el).append("<ul></ul>");
 			
@@ -84,39 +85,47 @@ $(document).ready(function() {
 			});
 			$('ul', this.el).append(itemView.render().el);
     		},
-    		selectNew: function() {
-    			var self = this;
+		selectNew: function() {
+    		var self = this;
 			$.getJSON('/recommendations/new', function(data) {
 				self.collection.reset(data);
 				self.render();	
 			});
-    		},
-    		selectQueued: function() {
-    			var self = this;
+    	},
+    	selectQueued: function() {
+    		var self = this;
 			$.getJSON('/recommendations/queued', function(data) {
 				self.collection.reset(data);
 				self.render();	
 			});
-    		},
-    		selectSeen: function() {
-    			var self = this;
+    	},
+    	selectSeen: function() {
+    		var self = this;
 			$.getJSON('/recommendations/already_seen', function(data) {
 				self.collection.reset(data);
 				self.render();	
 			});
-    		},
-    		selectDumped: function() {
-    			var self = this;
+    	},
+    	selectDumped: function() {
+    		var self = this;
 			$.getJSON('/recommendations/dumped', function(data) {
 				self.collection.reset(data);
 				self.render();	
 			});
-    		},
+    	},
+    	selectOwn: function() {
+			var self = this;
+			$.getJSON('/recommendations/own', function(data) {
+				self.collection.reset(data);
+				self.render();	
+			});
+		},
 		events: {
 			'click button.new': 'selectNew',
 			'click button.seen': 'selectSeen',
 			'click button.queued': 'selectQueued',
-			'click button.dumped': 'selectDumped'
+			'click button.dumped': 'selectDumped',
+			'click button.own': 'selectOwn'
 		}
 	});
 
