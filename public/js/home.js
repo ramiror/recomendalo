@@ -296,7 +296,7 @@ $(document).ready(function() {
 				model: item,
 				buttons:{
 					recommend:false,
-					remove:true,
+					remove:false,
 					edit:true
 				}
 			});
