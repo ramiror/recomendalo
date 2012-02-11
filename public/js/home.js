@@ -18,7 +18,6 @@ $(document).ready(function() {
 			
 			html += '<h3><%= title %></h3><p><%= desc %></p><div class="clear"></div>';
 			
-			console.log(this.options.section);
 			if (this.options.section != 'own') {
 				if (this.options.section != 'queued')
 					html += '<span class="viewlater pageButton">[ver mas tarde]</span>';
@@ -463,7 +462,6 @@ $(document).ready(function() {
 		buttons: {
 			'Editar': function() {
 				$.post('/users', $(this).children('form').first().serialize(), function(response) {
-					console.log(response);
 					if (response == 'success') {
 						location.reload();
 					}
