@@ -1,0 +1,21 @@
+%h2 Recibiste una nueva recomendación!
+
+%p
+  %a{:href=>link(@user.username)}
+    #{@user.username} 
+  te recomienda 
+  %b
+    #{@page.title}
+    
+- if @page.image
+  %img{:src=>link(@page.image), :style=>"max-width: 300; max-height: 300;"}
+  
+%p    
+  %i= @page.description
+    
+%a{:href=>link('')} Ver mis recomendaciones
+
+%p
+  Podés dejar de recibir estos mails configurando tus 
+  %a{:href=>link('')} opciones de cuenta
+  \.
