@@ -9,4 +9,15 @@ DataMapper.setup(:default, {
     :username => 'xxxx' ,
     :password => 'xxxx',
     :database => 'xxxx'
-})  
+})
+
+MAIL_VIA = :smtp
+MAIL_VIA_OPTIONS = {
+    :address => 'smtp.gmail.com',
+    :port => '587',
+    :enable_starttls_auto => true,
+    :user_name => 'ham1988.smtp',
+    :password => 'esemetepe',
+    :authentication => :plain,
+    :domain => "cimasoft.com.ar",
+}

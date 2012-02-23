@@ -24,6 +24,11 @@ class User
   property :website,    String
   property :username,   String
   property :photo,      String
+  
+  # mail notifications
+  property :notif_new_follower,       Boolean, :default => true
+  property :notif_new_recommendation, Boolean, :default => true
+  property :notif_newsletter        , Boolean, :default => true
 
   validates_presence_of :fullname
   validates_presence_of :username

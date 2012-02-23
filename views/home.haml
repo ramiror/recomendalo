@@ -51,10 +51,26 @@
     %input{:type=>'text', :name=>'fullname', :value => "#{@user.fullname}"}
     %label email
     %input{:type=>'text', :name=>'email', :value => "#{@user.email}"}
-    %label biography
+    %label biografía
     %textarea{:name=>'biography'}= @user.biography
     %label website
     %input{:type=>'text', :name=>'website', :value => "#{@user.website}"}
+    %h3 Notificaciones
+    %label notificaciones de recomendación
+    - if @user.notif_new_recommendation
+      %input{:type=>'checkbox', :name=>'notif_new_recommendation', :checked => "checked", :value=>1}
+    - else
+      %input{:type=>'checkbox', :name=>'notif_new_recommendation', :value=>1}
+    %label notificaciones de seguidores
+    - if @user.notif_new_follower
+      %input{:type=>'checkbox', :name=>'notif_new_follower', :checked => "#{@user.notif_new_follower || 'false'}", :value=>1}
+    - else
+      %input{:type=>'checkbox', :name=>'notif_new_follower', :value=>1}
+    %label noticias sobre Recomendalo
+    - if @user.notif_newsletter
+      %input{:type=>'checkbox', :name=>'notif_newsletter', :checked => "#{@user.notif_newsletter || 'false'}", :value=>1}
+    - else
+      %input{:type=>'checkbox', :name=>'notif_newsletter', :value=>1}
 
 #uploadImageDialog.dialog
   %form{:method=>'post', :enctype=>'multipart/form-data', :action=>'/pages/image'}

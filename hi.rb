@@ -7,6 +7,7 @@ require 'dm-migrations'
 require 'dm-serializer'
 require 'logger'
 require 'json'
+require 'pony'
 
 ### CONFIGURATION
 
@@ -20,7 +21,13 @@ else
 	exit
 end
 
+if ENV == :development
+	require 'ruby-debug'
+end
+
 ### CONSTANTS
+
+MAIL_FROM = 'recomendalo@cimasoft.com.ar'
 
 # constantes de recomendación
 NEW = 1
@@ -44,6 +51,46 @@ helpers do
 	def ulink(username, fullname)
 		"<a href='/#{username}'>#{fullname}</a>"
 	end
+	
+	def base_url
+		url ||= "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
+	end
+	
+	def link(path)
+		base_url+path
+	end
+	
+	def img_link(image)
+		link('upload/'+image)
+	end
+end
+
+def create_recommendation(page_id)
+	@page = Page.first :id => page_id
+	
+	if !@page
+		return false
+	end
+
+	fs = Follow.all :followed_id => session[:uid]
+	# recomendamos el nuevo objeto a todos los que tenemos alrededor
+	fs.each do |f|
+		Recommendation.create :creator_id => session[:uid], :user_id => f.follower_id, :state => NEW, :page_id => page_id
+		
+		@user = f.follower
+		if @user.notif_new_recommendation
+			# mandamos un mail a cada usuario, si tienen activado el mandar mails
+			Pony.mail :to => @user.email,
+				:from => MAIL_FROM,
+				:subject => "Nueva recomendación de #{@user.username}!",
+				:body => haml(:notif_new_recommendation),
+				:via => MAIL_VIA,
+				:via_options => MAIL_VIA_OPTIONS,
+				:content_type => 'text/html'
+		end		
+	end
+	# creamos un objeto para nosotros mismos (si no tenemos ningún seguidor igual la recomendación aparece en nuestra página)
+	Recommendation.create :creator_id => session[:uid], :user_id => session[:uid], :state => OWN, :page_id => page_id
 end
 
 ### API METHODS
@@ -63,6 +110,18 @@ get '/users/follow/:uid' do |uid|
 		recommendations.each do |r|
 			Recommendation.create(:creator_id => r.creator_id, :page_id => r.page_id, :user_id => session[:uid], :state => NEW)
 		end
+		
+		if user.notif_new_follower
+			@user = user
+			# mandamos un mail a cada usuario, si tienen activado el mandar mails
+			Pony.mail :to => user.email,
+				:from => MAIL_FROM,
+				:subject => "Nuevo seguidor: @#{user.username}!",
+				:body => haml(:notif_new_follower),
+				:via => MAIL_VIA,
+				:via_options => MAIL_VIA_OPTIONS,
+				:content_type => 'text/html'
+		end	
 		redirect '/home'
 	else
 		"No se pudo guardar el Follow"
@@ -121,13 +180,7 @@ post '/pages' do
 	page = Page.new(json.merge(:creator_id=>session[:uid]))
 	
 	if page.save
-		# recomendamos el nuevo objeto a todos los que tenemos alrededor
-		fs = Follow.all :followed_id=>session[:uid]
-		fs.each do |f|
-			Recommendation.create :creator_id => session[:uid], :user_id => f.follower_id, :state => NEW, :page_id => page.id
-		end
-		# creamos un objeto para nosotros mismos (si no tenemos ningún seguidor igual la recomendación aparece en nuestra página)
-		Recommendation.create :creator_id => session[:uid], :user_id => session[:uid], :state => OWN, :page_id => page.id
+		create_recommendation(page.id)
 
 		page.to_json
 	else
@@ -157,11 +210,7 @@ end
 
 # crea una recomendación
 post '/recommendations' do	
-	fs = Follow.all :followed_id => session[:uid]
-	fs.each do |f|
-		Recommendation.create :creator_id => session[:uid], :user_id => f.follower_id, :state => NEW, :page_id => params[:page_id]
-	end
-	Recommendation.create :creator_id => session[:uid], :user_id => session[:uid], :state => OWN, :page_id => params[:page_id]
+	create_recommendation(params[:page_id])
 	'success'
 end
 
@@ -216,7 +265,23 @@ end
 
 # edita un usuario
 post '/users' do
+	require 'ruby-debug'
+	debugger
 	u = User.first :id => session[:uid]
+	
+	# los browser no mandan las claves de los checkboxes cuando estos están destilados
+	if !params.include? 'notif_new_recommendation'
+		params['notif_new_recommendation'] = 0
+	end
+		
+	if !params.include? 'notif_new_follower'
+		params['notif_new_follower'] = 0
+	end
+		
+	if !params.include? 'notif_newsletter'
+		params['notif_newsletter'] = 0
+	end
+	
 	u.attributes = params
 	#u.update(params)
 	if u.save

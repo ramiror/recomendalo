@@ -296,7 +296,7 @@ $(document).ready(function() {
 				model: item,
 				buttons:{
 					recommend:false,
-					remove:false,
+					remove:false,	
 					edit:true
 				}
 			});
@@ -464,6 +464,8 @@ $(document).ready(function() {
 				$.post('/users', $(this).children('form').first().serialize(), function(response) {
 					if (response == 'success') {
 						location.reload();
+					} else {
+						alert('Hubo un problema al editar el perfil');
 					}
 				});
 			},
