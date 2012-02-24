@@ -1,41 +1,26 @@
-%script{:type => "text/javascript", :src  => "js/jquery-1.7.1.min.js"}
-%script{:type => "text/javascript", :src  => "js/jquery-ui-1.8.17.custom.min.js"}
-%script{:type => "text/javascript", :src  => "js/json2.js"}
-%script{:type => "text/javascript", :src  => "js/underscore-min.js"}
-%script{:type => "text/javascript", :src  => "js/backbone-min.js"}
-%script{:type => "text/javascript", :src  => "js/models.js"}
 %script{:type => "text/javascript", :src  => "js/index.js"}
-
-%link(rel="stylesheet" type="text/css" href="css/styles.css")
-%link(rel="stylesheet" type="text/css" href="css/ui-darkness/jquery-ui-1.8.17.custom.css")
-
-.header 
-  Recomendalo! La red social de recomendaciones
-  - if session[:uid]
-    %p= 'Bienvenido '+ulink(session[:uid], session[:username])
-    %a.right.barbutton{:href=>'/logout'} Salir
-  - else
-    %a.right.barbutton{:href=>'javascript:register();'} Registrate
-    %a.right.barbutton{:href=>'javascript:login();'} Login
     
-#main
-  %p Este espacio es para que puedas recomendar a tus amigos, conocidos o gente que admirás aquellas obras, o lo que sea que te guste y te parezca que merece esparcirse.
-  %p También podés seguir las recomendaciones de tus amigos, conocidos y de la gente que admirás.
+#welcome
+  #welcome-text 
+    %img{:src=>'img/welcome1.jpg'}
+    %h1 Bienvenido a Recomendalo! 
+    %p El espacio donde podés seguir las recomendaciones de tus amigos sobre todo tipo de productos y actividades!
   
-#registerDialog
-  %form{:action=>'/register', :method=>'post'}
-    %label Nombre de usuario
-    %input{:type=>'text', :name=>'username'}
-    %label Email
-    %input{:type=>'text', :name=>'email'}
-    %label Nombre completo
-    %input{:type=>'text', :name=>'fullname'}
-    %label Password
-    %input{:type=>'password', :name=>'password'}
-    %label Repeat password
-    %input{:type=>'password', :name=>'repeat_password'}
-
-#loginDialog
-  %form{:action=>'/login', :method=>'post'}
-    %input{:type=>'text', :name=>'login'}
-    %input{:type=>'password', :name=>'password'}
+  #welcome-forms
+    %form.well{:action=>'/login', :method=>'post', :id=>'login-form'}
+      %input{:type=>'text', :name=>'login'}
+      %input{:type=>'password', :name=>'password'}
+      %input{:type=>'submit', :value=>'Login'}
+    %form.well{:action=>'/register', :method=>'post', :id=>'register-form'}
+      %p ¿Todavía no tenés una cuenta? Registrate, ¡es fácil!
+      %label Nombre de usuario
+      %input{:type=>'text', :name=>'username'}
+      %label Email
+      %input{:type=>'email', :name=>'email'}
+      %label Nombre completo
+      %input{:type=>'text', :name=>'fullname'}
+      %label Password
+      %input{:type=>'password', :name=>'password'}
+      %label Repeat password
+      %input{:type=>'password', :name=>'repeat_password'}
+      %input{:type=>'submit', :value=>'Registrarme'}

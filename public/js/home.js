@@ -1,4 +1,8 @@
-var recommendationData;
+var rview;
+var pview;
+var searchView;
+var followersView;
+var followedsView;
 
 $(document).ready(function() {
 	var RView = Backbone.View.extend({
@@ -54,9 +58,8 @@ $(document).ready(function() {
 	});
 
 	var RNView = Backbone.View.extend({
-		el:$('#recommendations'),
 		initialize: function(opts) {
-			_.bindAll(this, 'render', 'selectNew', 'selectQueued', 'selectSeen', 'selectDumped', 'appendItem'); // every function that uses 'this' as the current object should be in here
+			_.bindAll(this, 'render', 'selectSection', 'selectNew', 'selectQueued', 'selectSeen', 'selectDumped', 'appendItem'); // every function that uses 'this' as the current object should be in here
 			if (opts.collection != undefined) {
 				this.collection = opts.collection;
 			} else {
@@ -70,28 +73,26 @@ $(document).ready(function() {
 		render: function() {
 			var self = this;
 			
-			$(this.el).html(''); //borramos datos del elemento, si los hubiera
-			
-			//$(this.el).append("<button id='add'>Add list item</button>");
-			$(this.el).append("<button class='new'>Nuevas</button>");
-			$(this.el).append("<button class='queued'>Encoladas</button>");
-			$(this.el).append("<button class='seen'>Vistas</button>");
-			$(this.el).append("<button class='dumped'>Descartadas</button>");
-			$(this.el).append("<button class='own'>Mías</button>");
-			
-			$(this.el).append("<ul></ul>");
+			var html = _.template( $("#recommendations-section").html(), {});
+			console.log(html);
+			$(this.el).html(html);
 			
 			_(this.collection.models).each(function(item){ // in case collection is not empty
 		        	self.appendItem(item);
 		      	}, this);
+		},
+		selectSection: function() {
+			//TODO; arreglar porque no funciona
+			$('li', this.el).removeClass('active');
+			$('li.'+this.section, this.el).addClass('active');
 		},
 		appendItem: function(item){
 			var itemView = new RView({
 				model: item,
 				section: this.section
 			});
-			$('ul', this.el).append(itemView.render().el);
-    		},
+			$('.content', this.el).append(itemView.render().el);
+    	},
 		selectNew: function() {
     		var self = this;
     		this.section = 'new';
@@ -99,6 +100,7 @@ $(document).ready(function() {
 				self.collection.reset(data);
 				self.render();	
 			});
+			this.selectSection();
     	},
     	selectQueued: function() {
     		var self = this;
@@ -107,6 +109,7 @@ $(document).ready(function() {
 				self.collection.reset(data);
 				self.render();	
 			});
+			this.selectSection();
     	},
     	selectSeen: function() {
     		var self = this;
@@ -115,6 +118,7 @@ $(document).ready(function() {
 				self.collection.reset(data);
 				self.render();	
 			});
+			this.selectSection();
     	},
     	selectDumped: function() {
     		var self = this;
@@ -123,6 +127,7 @@ $(document).ready(function() {
 				self.collection.reset(data);
 				self.render();	
 			});
+			this.selectSection();
     	},
     	selectOwn: function() {
 			var self = this;
@@ -131,13 +136,14 @@ $(document).ready(function() {
 				self.collection.reset(data);
 				self.render();	
 			});
+			this.selectSection();
 		},
 		events: {
-			'click button.new': 'selectNew',
-			'click button.seen': 'selectSeen',
-			'click button.queued': 'selectQueued',
-			'click button.dumped': 'selectDumped',
-			'click button.own': 'selectOwn'
+			'click li.new a': 'selectNew',
+			'click li.dumped a': 'selectDumped',
+			'click li.seen a': 'selectSeen',
+			'click li.own a': 'selectOwn',
+			'click li.queued a': 'selectQueued'
 		}
 	});
 
@@ -212,7 +218,6 @@ $(document).ready(function() {
 	});
 	
 	var SearchPageView = Backbone.View.extend({
-		el:$('#searchpages'),
 		initialize: function(opts) {
 			_.bindAll(this, 'render', 'search', 'appendItem'); // every function that uses 'this' as the current object should be in here
 			if (opts.collection != undefined) {
@@ -248,7 +253,7 @@ $(document).ready(function() {
 					edit:false
 				}
 			});
-			$('ul', this.el).append(pageView.render().el);
+			$('ul.list-content', this.el).append(pageView.render().el);
 		},
 		search: function() {	
 			var self = this;
@@ -265,7 +270,6 @@ $(document).ready(function() {
 	});
 	
 	var PageNView = Backbone.View.extend({
-		el:$('#pages'),
 		initialize: function(opts) {
 			_.bindAll(this, 'render', 'load', 'createPage', 'appendItem'); // every function that uses 'this' as the current object should be in here
 			if (opts.collection != undefined) {
@@ -300,7 +304,7 @@ $(document).ready(function() {
 					edit:true
 				}
 			});
-			$('ul', this.el).append(pageView.render().el);
+			$('ul.list-content', this.el).append(pageView.render().el);
     		},
     		load: function() {	
     			var self = this;
@@ -343,7 +347,6 @@ $(document).ready(function() {
 	});
 	
 	var FollowersView = Backbone.View.extend({
-		el:$('#followers'),
 		initialize: function(opts) {
 			_.bindAll(this, 'render', 'load', 'appendItem'); // every function that uses 'this' as the current object should be in here
 			if (opts.collection != undefined) {
@@ -376,7 +379,7 @@ $(document).ready(function() {
 					unfollow:false
 				}
 			});
-			$('ul', this.el).append(userView.render().el);
+			$('ul.list-content', this.el).append(userView.render().el);
 		},
 		load: function() {
 			var self = this;
@@ -389,7 +392,6 @@ $(document).ready(function() {
 	});
 	
 	var FollowingView = Backbone.View.extend({
-		el:$('#followeds'),
 		initialize: function(opts) {
 			_.bindAll(this, 'render', 'load', 'appendItem'); // every function that uses 'this' as the current object should be in here
 			if (opts.collection != undefined) {
@@ -422,7 +424,7 @@ $(document).ready(function() {
 					unfollow:true
 				}
 			});
-			$('ul', this.el).append(userView.render().el);
+			$('ul.list-content', this.el).append(userView.render().el);
 		},
 		load: function() {
 			var self = this;
@@ -435,25 +437,28 @@ $(document).ready(function() {
 	});
 
 	// inicialización
-	var recommendations = new RList();
-	var rview = new RNView({
-		collection: recommendations
+	rview = new RNView({
+		collection: new RList(),
+		el:$('#list-content'),
 	});
 	rview.selectNew();
 	
-	var pages = new PageList();
-	var pview = new PageNView({
-		collection: pages
+	pview = new PageNView({
+		collection: new PageList(),
+		el:$('#list-content'),
 	});
-	pview.load();
 	
-	var searchView = new SearchPageView({});
+	searchView = new SearchPageView({
+		el:$('#list-content'),
+	});
 	
-	var followersView = new FollowersView({});
-	followersView.load();
+	followersView = new FollowersView({
+		el:$('#list-content'),
+	});
 	
-	var followedsView = new FollowingView({});
-	followedsView.load();
+	followedsView = new FollowingView({
+		el:$('#list-content'),
+	});
 	
 	//dialogs
 	
@@ -479,4 +484,34 @@ $(document).ready(function() {
 
 function editProfile() {
 	$('#editProfileDialog').dialog('open');
+}
+
+function showRecommendations() {
+	$('#home-menu li').removeClass('active');
+	$('#show-recommendations').addClass('active');
+	rview.selectNew();
+}
+
+function showSearchPages() {
+	$('#home-menu li').removeClass('active');
+	$('#show-search-pages').addClass('active');
+	alert("implementar");
+}
+
+function showPages() {
+	$('#home-menu li').removeClass('active');
+	$('#show-pages').addClass('active');
+	pview.load();
+}
+
+function showFollowers() {
+	$('#home-menu li').removeClass('active');
+	$('#show-followers').addClass('active');
+	followersView.load();
+}
+
+function showFolloweds() {
+	$('#home-menu li').removeClass('active');
+	$('#show-followeds').addClass('active');
+	followedsView.load();
 }

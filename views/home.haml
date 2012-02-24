@@ -1,42 +1,24 @@
 %script{:type => "text/javascript", :src  => "js/home.js"}
 
-.header
-  Bienvenido #{session[:fullname]}!
-  %a.right.barbutton{:href=>'/logout'} Logout
-  %a.right.barbutton{:href=>'/users/photo'} Editar foto
-  %a.right.barbutton{:href=>'javascript:editProfile();'} Editar perfil
-  %a.right.barbutton{:href=>'/'+@user.username} Perfil
-  %a.right.barbutton{:href=>'/users_search'} Buscar usuarios
-
 :javascript
   var NEW = #{NEW};
   var QUEUED = #{QUEUED};
   var ALREADY_SEEN = #{ALREADY_SEEN};
   var DUMPED = #{DUMPED};
   var OWN = #{DUMPED};
-
-.section
-  %h3 Recomendaciones
-  %ul#recommendations
-
-.section
-  %h3 Buscar
-  %p Buscá algo y recomendalo!
-  #searchpages
-
-.section
-  %h3 Mis páginas
-  %p Si lo que estás buscando no existe, crealo!
-  #pages
-
-.section
-  %h3 Seguidores
-  #followers
-
-.section
-  %h3 Gente a la que sigo
-  #followeds
-
+  
+#home-content.container-fluid
+  .row-fluid
+    .span2
+      #user-profile-card.well Usuario: Hugo
+      %ul.nav.nav-pills.nav-stacked#home-menu
+        %li#show-recommendations.active= link_to 'Recomendaciones', 'javascript:showRecommendations()'
+        %li#show-search-pages= link_to 'Buscar', 'javascript:showSearchPages()'
+        %li#show-pages= link_to 'Mis páginas', 'javascript:showPages()'
+        %li#show-followers= link_to 'Seguidores', 'javascript:showFollowers()'
+        %li#show-followeds= link_to 'Siguiendo', 'javascript:showFolloweds()'
+    .span10#list-content
+        
 #createPageDialog
   %label{:for=>'pageTitle'} Título
   %input{:type=>'text', :name=>'title', :id=>'pageTitle'}
@@ -77,3 +59,12 @@
     %input{:type=>'hidden', :name=>'page_id', :id=>'page-id-field'}
     %label Imágen
     %input{:type=>'file', :name=>'image'}
+
+#recommendations-section
+  %ul.nav.nav-tabs
+    %li.active.new= link_to 'Nuevas', '#'
+    %li.queued= link_to 'Lo veo mas tarde', '#'  
+    %li.seen= link_to 'Ya lo vi', '#'  
+    %li.dumped= link_to 'No quiero verlo', '#'  
+    %li.own= link_to 'Propias', '#'    
+  %ul.content

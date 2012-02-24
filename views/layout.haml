@@ -8,8 +8,35 @@
     %script{:type => "text/javascript", :src  => "js/underscore-min.js"}
     %script{:type => "text/javascript", :src  => "js/backbone-min.js"}
     %script{:type => "text/javascript", :src  => "js/models.js"}
+    %script{:type => "text/javascript", :src  => "js/bootstrap.js"}
     
     %link(rel="stylesheet" type="text/css" href="/css/styles.css")
+    %link(rel="stylesheet" type="text/css" href="/css/bootstrap.css")
     %link(rel="stylesheet" type="text/css" href="/css/ui-darkness/jquery-ui-1.8.17.custom.css")
-  %body= yield
-
+  %body
+    %header.navbar
+      .navbar-inner
+        .container
+          .brand Recomendalo!
+          .nav-collapse
+            %ul.nav
+              - if session[:uid]
+                %li
+                  %a{:href=>'/'+@user.username} Perfil
+                %li  
+                  %a{:href=>'/users_search'} Buscar usuarios
+            %ul.nav.pull-right
+              - if session[:uid]
+                %li.dropdown
+                  %a.dropdown-toggle{:data=>{:toggle=>'dropdown'}}
+                    Cuenta
+                    %b.caret
+                  %ul.dropdown-menu
+                    %li
+                      %a{:href=>'/users/photo'} Editar foto
+                    %li
+                      %a{:href=>'javascript:editProfile();'} Editar perfil
+                    %li
+                      %a{:href=>'/logout'} Logout
+    #content= yield
+    %footer

@@ -47,21 +47,27 @@ enable :sessions, :logging, :raise_errors
 
 ### HELPERS
 
-helpers do
-	def ulink(username, fullname)
-		"<a href='/#{username}'>#{fullname}</a>"
-	end
-	
+helpers do	
 	def base_url
 		url ||= "#{request.env['rack.url_scheme']}://#{request.env['HTTP_HOST']}"
 	end
 	
+	#TODO: cambiar de nombre por url
 	def link(path)
 		base_url+path
 	end
 	
 	def img_link(image)
 		link('upload/'+image)
+	end
+	
+	# VIEW HELPERS
+	def link_to(text, url)
+		"<a href='#{url}'>#{text}</a>"
+	end
+	
+	def ulink(username, fullname)
+		"<a href='/#{username}'>#{fullname}</a>"
 	end
 end
 
