@@ -18,7 +18,7 @@ $(document).ready(function() {
 			
 			$(this.el).html(''); //borramos datos del elemento, si los hubiera
 			
-			$(this.el).append("<ul></ul>");
+			$(this.el).append("<ul class='unstyled users'></ul>");
 			
 			_(this.collection.models).each(function(item){ // in case collection is not empty
 		        	self.appendItem(item);

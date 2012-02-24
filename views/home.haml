@@ -10,7 +10,13 @@
 #home-content.container-fluid
   .row-fluid
     .span2
-      #user-profile-card.well Usuario: Hugo
+      #user-profile-card.well 
+        %img.user-image{:src=>@user.photo}
+        %h4 #{@user.fullname}
+        %p Recomendaciones: #{@user.recommendations.size}
+        %p Seguidores: #{@user.followers.size}
+        %p Siguiendo: #{@user.followeds.size}
+        
       %ul.nav.nav-pills.nav-stacked#home-menu
         %li#show-recommendations.active= link_to 'Recomendaciones', 'javascript:showRecommendations()'
         %li#show-search-pages= link_to 'Buscar', 'javascript:showSearchPages()'
@@ -19,7 +25,7 @@
         %li#show-followeds= link_to 'Siguiendo', 'javascript:showFolloweds()'
     .span10#list-content
         
-#createPageDialog
+#createPageDialog.hidden.dialog
   %label{:for=>'pageTitle'} Título
   %input{:type=>'text', :name=>'title', :id=>'pageTitle'}
   %label{:for=>'pageDescription'} Descripción
@@ -27,7 +33,7 @@
   %label{:for=>'pageWebsite'} Website
   %input{:name=>'website', :id=>'pageWebsite'}
 
-#editProfileDialog
+#editProfileDialog.hidden.dialog
   %form{:method=>'post', :action=>'users'}
     %label nombre y apellido
     %input{:type=>'text', :name=>'fullname', :value => "#{@user.fullname}"}
@@ -54,17 +60,39 @@
     - else
       %input{:type=>'checkbox', :name=>'notif_newsletter', :value=>1}
 
-#uploadImageDialog.dialog
+#uploadImageDialog.hidden.dialog
   %form{:method=>'post', :enctype=>'multipart/form-data', :action=>'/pages/image'}
     %input{:type=>'hidden', :name=>'page_id', :id=>'page-id-field'}
     %label Imágen
     %input{:type=>'file', :name=>'image'}
 
-#recommendations-section
+#recommendations-section.hidden
   %ul.nav.nav-tabs
     %li.active.new= link_to 'Nuevas', '#'
     %li.queued= link_to 'Lo veo mas tarde', '#'  
     %li.seen= link_to 'Ya lo vi', '#'  
-    %li.dumped= link_to 'No quiero verlo', '#'  
+    %li.dumped= link_to 'No, gracias', '#'  
     %li.own= link_to 'Propias', '#'    
+  %ul.content
+  
+#search-section.hidden
+  %h3 Buscar
+  %input{:type=>'text', :name=>'query'}
+  %button.buscar Buscar
+  %ul.content
+  
+#pages-section.hidden
+  %h3 Mis páginas
+  %p Páginas creadas por vos. Sólo vos podés modificarlas.
+  %ul.nav.nav-pills
+    %li
+      %button.recommend Crear página
+  %ul.content
+
+#followers-section.hidden
+  %h3 Seguidores
+  %ul.content
+
+#following-section.hidden
+  %h3 Siguiendo
   %ul.content

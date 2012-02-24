@@ -351,6 +351,7 @@ get '/logout' do
 end
 
 get '/users_search' do
+	@user = User.first :id => session[:uid]
 	haml :users_search
 end
 

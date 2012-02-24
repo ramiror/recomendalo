@@ -28,7 +28,7 @@ $(document).ready(function() {
 				if (this.options.section != 'seen')
 					html+='<span class="alreadyseen pageButton">[ya lo vi]</span>';
 				if (this.options.section != 'dumped')	
-					'<span class="delete pageButton">[botar]</span>';
+					html+='<span class="delete pageButton">[botar]</span>';
 			}
 				
 			var compiled = _.template(html);
@@ -74,7 +74,6 @@ $(document).ready(function() {
 			var self = this;
 			
 			var html = _.template( $("#recommendations-section").html(), {});
-			console.log(html);
 			$(this.el).html(html);
 			
 			_(this.collection.models).each(function(item){ // in case collection is not empty
@@ -233,12 +232,8 @@ $(document).ready(function() {
 		render: function() {
 			var self = this;
 			
-			$(this.el).html(''); //borramos datos del elemento, si los hubiera
-			
-			$(this.el).append("<input type='text' name='query' />");
-			$(this.el).append("<button class='buscar'>Buscar</button>");
-			
-			$(this.el).append("<ul></ul>");
+			//borramos datos del elemento, si los hubiera y copiamos lo que haya en empty section
+			$(this.el).html(_.template( $("#search-section").html(), {}));
 			
 			_(this.collection.models).each(function(item){ // in case collection is not empty
 				self.appendItem(item);
@@ -253,7 +248,7 @@ $(document).ready(function() {
 					edit:false
 				}
 			});
-			$('ul.list-content', this.el).append(pageView.render().el);
+			$('ul.content', this.el).append(pageView.render().el);
 		},
 		search: function() {	
 			var self = this;
@@ -285,11 +280,8 @@ $(document).ready(function() {
 		render: function() {
 			var self = this;
 			
-			$(this.el).html(''); //borramos datos del elemento, si los hubiera
-			
-			$(this.el).append("<button class='recommend'>Crear página</button>");
-			
-			$(this.el).append("<ul></ul>");
+			//borramos datos del elemento, si los hubiera y copiamos lo que haya en empty section
+			$(this.el).html(_.template( $("#pages-section").html(), {}));
 			
 			_(this.collection.models).each(function(item){ // in case collection is not empty
 		        	self.appendItem(item);
@@ -304,7 +296,7 @@ $(document).ready(function() {
 					edit:true
 				}
 			});
-			$('ul.list-content', this.el).append(pageView.render().el);
+			$('ul.content', this.el).append(pageView.render().el);
     		},
     		load: function() {	
     			var self = this;
@@ -362,9 +354,8 @@ $(document).ready(function() {
 		render: function() {
 			var self = this;
 			
-			$(this.el).html(''); //borramos datos del elemento, si los hubiera
-			
-			$(this.el).append("<ul></ul>");
+			//borramos datos del elemento, si los hubiera y copiamos lo que haya en empty section
+			$(this.el).html(_.template( $("#followers-section").html(), {}));
 			
 			_(this.collection.models).each(function(item){ // in case collection is not empty
 		        	self.appendItem(item);
@@ -379,7 +370,7 @@ $(document).ready(function() {
 					unfollow:false
 				}
 			});
-			$('ul.list-content', this.el).append(userView.render().el);
+			$('ul.content', this.el).append(userView.render().el);
 		},
 		load: function() {
 			var self = this;
@@ -407,9 +398,8 @@ $(document).ready(function() {
 		render: function() {
 			var self = this;
 			
-			$(this.el).html(''); //borramos datos del elemento, si los hubiera
-			
-			$(this.el).append("<ul></ul>");
+			//borramos datos del elemento, si los hubiera y copiamos lo que haya en empty section
+			$(this.el).html(_.template( $("#following-section").html(), {}));
 			
 			_(this.collection.models).each(function(item){ // in case collection is not empty
 		        	self.appendItem(item);
@@ -424,7 +414,7 @@ $(document).ready(function() {
 					unfollow:true
 				}
 			});
-			$('ul.list-content', this.el).append(userView.render().el);
+			$('ul.content', this.el).append(userView.render().el);
 		},
 		load: function() {
 			var self = this;
