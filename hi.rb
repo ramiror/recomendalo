@@ -8,9 +8,7 @@ require 'dm-serializer'
 require 'logger'
 require 'json'
 require 'pony'
-require 'rack-flash'
-
-use Rack::Flash, :sweep => true
+require 'sinatra/flash'
 
 ### CONFIGURATION
 
