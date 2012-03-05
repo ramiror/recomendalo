@@ -6,7 +6,7 @@
         %h4 #{@user.fullname} (@#{@user.username})
       - else
         %h4 @#{@user.username}
-      %p Recomendaciones: #{@user.recommendations.size}
+      %p Recomendaciones: #{@user.own_recommendations.size}
       %p Seguidores: #{@user.followers.size}
       %p Siguiendo: #{@user.followeds.size}
       - if @user.website

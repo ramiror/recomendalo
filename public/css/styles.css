@@ -151,3 +151,23 @@ ul.users {
 ul.users li {
 	padding:10px;
 }
+
+#notice-bar {
+	margin: 0px auto;
+	padding:5px;
+	width:710px;	
+	position:relative;
+	color:white;
+	background:blue;
+	margin-bottom:10px;
+}
+
+#error-bar {
+	margin: 0px auto;
+	padding:5px;
+	width:710px;	
+	position:relative;
+	color:white;
+	background:red;
+	margin-bottom:10px;
+}

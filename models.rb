@@ -49,6 +49,10 @@ class User
   # estas son las asociaciones finales, las que vamos a usar en general.
   has n, :followers, self, :through => :follows, :via => :follower
   has n, :followeds, self, :through => :followings, :via => :followed
+  
+  def own_recommendations
+	Recommendation.all :creator_id => self.id, :state => OWN
+  end
 end
 
 class Recommendation

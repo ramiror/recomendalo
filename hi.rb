@@ -8,18 +8,15 @@ require 'dm-serializer'
 require 'logger'
 require 'json'
 require 'pony'
+require 'rack-flash'
+
+use Rack::Flash, :sweep => true
 
 ### CONFIGURATION
 
 DataMapper::Logger.new(STDOUT, :debug)
 
-if File.exists? "config.rb"
-	require './config.rb'
-else
-	#TODO: ver de loguear esto en vez de usar puts
-	puts "No hay ningún archivo config.rb creado."
-	exit
-end
+require './config.rb'
 
 if ENV == :development
 	require 'ruby-debug'
@@ -258,6 +255,7 @@ delete '/pages/:pid' do |pid|
 end
 
 # crea un usuario
+#TODO: llamar a esto por POST!
 post '/register' do
 	u = User.new(params)
 	if u.save
@@ -265,7 +263,8 @@ post '/register' do
 		session[:fullname] = u.fullname
 		redirect '/home'
 	else
-		"No se pudo guardar el usuario "+params.inspect
+		flash[:error] = "No se pudo registrar el usuario, chequeá que todo esté bien"
+		redirect '/'
 	end
 end
 

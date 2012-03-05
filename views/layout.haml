@@ -38,5 +38,10 @@
                       %a{:href=>'javascript:editProfile();'} Editar perfil
                     %li
                       %a{:href=>'/logout'} Logout
-    #content= yield
+    #content
+      - if flash[:notice]
+        #notice-bar= flash[:notice]
+      - if flash[:error]
+        #error-bar= flash[:error]
+      #{yield}
     %footer
