@@ -1,0 +1,41 @@
+#   Copyright (c) 2012, Hugo Alberto Massaroli  This file is
+#   licensed under the Affero General Public License version 3 or later.  See
+#   the COPYRIGHT file.
+
+# por default el environment es development
+#
+if !settings.environment
+	set :environment, :development
+end
+
+configure :development do
+	DataMapper.setup(:default, {
+		:adapter  => 'mysql',
+		:host     => 'localhost',
+		:username => 'root' ,
+		:password => '123456',
+		:database => 'recomiendo'
+	})
+	
+	MAIL_VIA = :smtp
+	MAIL_VIA_OPTIONS = {
+		:address => 'smtp.gmail.com',
+		:port => '587',
+		:enable_starttls_auto => true,
+		:user_name => '######',
+		:password => '######',
+		:authentication => :plain,
+		:domain => "######",
+	}
+end
+
+configure :production do
+	DataMapper.setup(:default, {
+		:adapter  => 'mysql',
+		:host     => 'localhost',
+		:username => 'root' ,
+		:password => '123456',
+		:database => 'recomiendo'
+	})
+end
+

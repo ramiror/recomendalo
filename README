@@ -21,7 +21,7 @@ gem install sinatra bundler/setup dm-core dm-validations dm-migrations dm-serial
 
 NOTA: si no usás RVM probablemente necesites usar "sudo gem install" en vez de "gem install"
 
-4) Configurá tu instalación en config.rb
+4) Renombrá config.rb.default a config.rb y configurá tu instalación.
 5) ruby app.rb
 
 NOTA: este manual no fue probado así que puede contener errores. El feedback es apreciado.
@@ -49,7 +49,7 @@ gem install sinatra bundler/setup dm-core dm-validations dm-migrations dm-serial
 
 NOTE: if you are not using RVM you should probably need to use "sudo gem install" instead of "gem install"
 
-4) Configure your installation in config.rb.
+4) Rename config.rb.default to config.rb and configure your installation.
 5) ruby app.rb
 
 NOTE: this manual has not been tested so it may contain errors. Feedback is appreciated.
