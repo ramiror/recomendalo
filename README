@@ -31,7 +31,7 @@ English:
 --------
 
 Recomendalo! is a social network for recommendations of products, services or anything you have in mind.
-Share what you like with your friends. And its open source and free software. Enjoy!
+Share what you like with your friends. And it's open source and free software. Enjoy!
 
 Recomendalo! development server:
 
@@ -47,7 +47,7 @@ sudo apt-get install ruby1.9.1 rubygems
 
 gem install sinatra bundler/setup dm-core dm-validations dm-migrations dm-serializer logger json pony sinatra/flash
 
-NOTE: if you are not using RVM you should probably need to use "sudo gem install" instead of "gem install"
+NOTE: if you are not using RVM you might need to use "sudo gem install" instead of "gem install"
 
 4) Rename config.rb.default to config.rb and configure your installation.
 5) ruby app.rb
