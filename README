@@ -1,0 +1,55 @@
+Español:
+--------
+
+Recomendalo! es una red social de recomendaciones de productos, servicios o cualquier cosa que se te ocurra.
+Compartí lo que te gusta con tus amigos y conocidos. Es open source y software libre. ¡Disfrutalo!
+
+Servidor de desarrollo:
+
+http://recomendalo.cimasoft.com.ar
+
+
+Como ejecutar este proyecto en Linux:
+
+1) Bajáte el código.
+2) Creá una base de datos MySQL llamada "recomendalo" o como se te ocurra.
+3) Instalá los requerimientos, ruby 1.9 y estas gemas:
+
+sudo apt-get install ruby1.9.1 rubygems
+
+gem install sinatra bundler/setup dm-core dm-validations dm-migrations dm-serializer logger json pony sinatra/flash
+
+NOTA: si no usás RVM probablemente necesites usar "sudo gem install" en vez de "gem install"
+
+4) Configurá tu instalación en config.rb
+5) ruby app.rb
+
+NOTA: este manual no fue probado así que puede contener errores. El feedback es apreciado.
+
+
+English:
+--------
+
+Recomendalo! is a social network for recommendations of products, services or anything you have in mind.
+Share what you like with your friends. And its open source and free software. Enjoy!
+
+Recomendalo! development server:
+
+http://recomendalo.cimasoft.com.ar
+
+How to run this project in your Linux:
+
+1) Download the code
+2) Create a MySQL database called "recomendalo" or whathever
+3) Install requirements, ruby 1.9 and this gems: 
+
+sudo apt-get install ruby1.9.1 rubygems
+
+gem install sinatra bundler/setup dm-core dm-validations dm-migrations dm-serializer logger json pony sinatra/flash
+
+NOTE: if you are not using RVM you should probably need to use "sudo gem install" instead of "gem install"
+
+4) Configure your installation in config.rb.
+5) ruby app.rb
+
+NOTE: this manual has not been tested so it may contain errors. Feedback is appreciated.

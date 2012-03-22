@@ -1,3 +1,7 @@
+//   Copyright (c) 2012, Hugo Alberto Massaroli  This file is
+//   licensed under the Affero General Public License version 3 or later.  See
+//   the COPYRIGHT file.
+
 // esto tiene todos los modelos que se usan en la página
 // cambiar esto por CoffeeScript
 var host = '/';
